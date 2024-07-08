@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="View" style="flex-grow: 1;">
+        <ui:TextField label="Asset File Path" value="Asset/TestAsset/" readonly="true" picking-mode="Ignore" name="FilePath" style="opacity: 0.5;" />
+        <ui:TextField picking-mode="Ignore" label="Download URL" value="url" keyboard-type="URL" name="AssetURL" focusable="true" style="display: flex; visibility: visible; overflow: hidden; opacity: 1;" />
+        <ui:Label tabindex="-1" text="This is BOOTH URL" parse-escape-sequences="true" display-tooltip-when-elided="true" name="VendorInfo" style="padding-top: 8px; padding-left: 4px; padding-right: 4px; margin-top: 0; margin-bottom: 0; margin-right: 0; margin-left: 0; padding-bottom: 8px; color: rgb(60, 255, 0); -unity-text-align: upper-center;" />
+        <ui:EnumField label="LicenseType" type="sh0uRoom.AssetLinker.LicenseType, sh0uRoom.AssetLinker" name="LicenseType" />
+        <ui:TextField picking-mode="Ignore" label="License URL" value="filler text" name="LicenseURL" />
+        <ui:Toggle label="FREE?" tooltip="If this asset not need to pay, check it." name="IsFreeToggle" />
+        <ui:Foldout text="File Paths" name="FilePaths" />
+        <ui:HelpBox text="&lt;b&gt;&lt;size=14&gt;Don&apos;t modify any asset files to be tracked.&lt;/size&gt;&lt;/b&gt;&#10;If you want to modify asset files, create a &lt;b&gt;Prefab&lt;/b&gt; file and place it &lt;b&gt;outside&lt;/b&gt; the asset directory." message-type="Warning" name="ModifyWarning" />
+        <ui:Button text="Link!" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ExportButton" style="height: 30px; font-size: 15px;" />
+        <ui:Label tabindex="-1" text="Not Linked" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LinkInfo" style="padding-top: 4px; padding-left: 4px; padding-right: 4px; margin-top: 0; margin-bottom: 0; margin-right: 0; margin-left: 0; padding-bottom: 4px; color: rgb(232, 255, 0); -unity-text-align: upper-center;" />
+    </ui:VisualElement>
+</ui:UXML>

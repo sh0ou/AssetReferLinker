@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="ItemView" style="flex-grow: 0; background-color: rgba(0, 0, 0, 0.2);">
+        <ui:VisualElement name="InfoView" style="flex-grow: 0; flex-direction: row; flex-shrink: 1; padding-top: 4px; padding-bottom: 4px; padding-right: 0; padding-left: 0;">
+            <ui:Button text="Download" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DownloadButton" style="width: 70px;" />
+            <ui:Button text="-" parse-escape-sequences="true" display-tooltip-when-elided="true" name="UnlinkButton" style="background-color: rgb(101, 50, 50);" />
+            <ui:Label tabindex="-1" text="TextMesh Pro" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AssetName" style="padding-top: 3px; padding-right: 3px; padding-bottom: 3px; padding-left: 3px;" />
+        </ui:VisualElement>
+        <ui:Foldout text="Target Item Paths" name="ItemPaths">
+            <ui:Label tabindex="-1" text="Assets/TestAsset/" parse-escape-sequences="true" display-tooltip-when-elided="true" name="FilePath" style="padding-top: 2px; padding-right: 0; padding-bottom: 2px; padding-left: 0;" />
+        </ui:Foldout>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="View" style="flex-grow: 1; margin-right: 5px; margin-left: 5px;">
+        <ui:Label tabindex="-1" text="2 file is missing!" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MissingInfo" style="color: rgb(238, 255, 0);" />
+        <ui:VisualElement style="flex-grow: 1;" />
+        <ui:Button text="Download All" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DownloadButton" />
+    </ui:VisualElement>
+</ui:UXML>

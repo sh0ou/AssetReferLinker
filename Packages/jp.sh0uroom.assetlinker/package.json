@@ -1,0 +1,20 @@
+{
+  "name": "jp.sh0uroom.assetlinker",
+  "displayName": "AssetReferLinker",
+  "version": "1.0.0",
+  "description": "AssetReferLinker (ARL) is a package for easily referencing information on external assets used in a project.",
+  "gitDependencies": {},
+  "author": {
+    "name": "sh0u",
+    "email": "47475540+sh0ou@users.noreply.github.com",
+    "url": "sh0u.jp"
+  },
+  "legacyFolders": {},
+  "legacyFiles": {},
+  "type": "tool",
+  "unity": "2022.3",
+  "hideInEditor": false,
+  "dependencies": {
+    "com.unity.modules.uielements": ""
+  }
+}
