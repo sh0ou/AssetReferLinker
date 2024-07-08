@@ -1,0 +1,62 @@
+[
+  {
+    "name": "F: HELP",
+    "color": "AC0863",
+    "description": "[進行状況] たすけて"
+  },
+  {
+    "name": "F: invalid",
+    "color": "000000",
+    "description": "[進行状況] 勘違い、実現不可、重複"
+  },
+  {
+    "name": "F: Wontfix",
+    "color": "ffffff",
+    "description": "[進行状況] 放置"
+  },
+  {
+    "name": "P1: Critical",
+    "color": "7d0015",
+    "description": "[優先度] 緊急性の高いタスク"
+  },
+  {
+    "name": "P2: High",
+    "color": "ff0037",
+    "description": "[優先度] 優先的に実装すべきタスク"
+  },
+  {
+    "name": "P3: Medium",
+    "color": "ffd900",
+    "description": "[優先度] 通常タスク"
+  },
+  {
+    "name": "P4: Low",
+    "color": "11422a",
+    "description": "[優先度] 余裕ができたら行うタスク"
+  },
+  {
+    "name": "T: Bug",
+    "color": "ff0000",
+    "description": "[種類] 不具合"
+  },
+  {
+    "name": "T: Document",
+    "color": "1D76DB",
+    "description": "[種類] ドキュメント"
+  },
+  {
+    "name": "T: Enhancement",
+    "color": "006b75",
+    "description": "[種類] 機能の改修・強化"
+  },
+  {
+    "name": "T: New Feature",
+    "color": "a2eeef",
+    "description": "[種類] 機能追加"
+  },
+  {
+    "name": "T: Refactoring",
+    "color": "D4C5F9",
+    "description": "[種類] コードの整理・調整"
+  }
+]
