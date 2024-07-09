@@ -38,6 +38,7 @@ namespace sh0uRoom.AssetLinker
     [System.Serializable]
     public class LinkerData
     {
+        public string Name { get; set; }
         public string DownloadURL { get; set; }
         public string LicenseURL { get; set; }
         public Vendor Vendor { get; set; }
