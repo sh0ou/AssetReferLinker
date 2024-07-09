@@ -1,0 +1,11 @@
+﻿ID,EN,JP
+1,Asset File Path,アセットの場所
+2,Download URL,ダウンロードURL
+3,LicenseURL,ライセンスのURL
+4,FREE?,無料?
+5,Fili Paths,ファイルパス一覧
+6,Don't modify any asset files to be tracked!,追跡対象のアセットは編集しないでください！
+7,If you want to modify asset files, create a <b>Prefab</b> file and place it <b>outside</b> the asset directory.,変更内容を保存したい場合、<b>Prefab</b>を作成し、それをアセットフォルダの<b>外に配置</b>してください。
+8,This is,これは
+9,URL,のURLです
+10,License URL is not entered. For licensed assets, enter is recommended.,ライセンスURLが入力されていません。ライセンスが付与されてたり、利用規約が存在する場合、入力を推奨します。
