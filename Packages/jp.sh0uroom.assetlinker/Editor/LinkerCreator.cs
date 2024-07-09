@@ -4,6 +4,7 @@ using UnityEngine.UIElements;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace sh0uRoom.AssetLinker
 {
@@ -15,6 +16,17 @@ namespace sh0uRoom.AssetLinker
             var window = GetWindow<LinkerCreator>();
         }
 
+        [InitializeOnLoadMethod]
+        private static void Initialize()
+        {
+            //ウインドウが開かれてる場合は閉じる
+            var window = GetWindow<LinkerCreator>();
+            if (window != null)
+            {
+                window.Close();
+            }
+        }
+
         private void OnEnable()
         {
             //ルート要素の作成
@@ -23,15 +35,27 @@ namespace sh0uRoom.AssetLinker
             var rootView = asset.Q<VisualElement>("View");
             var path = AssetDatabase.GetAssetPath(Selection.activeObject);
 
+            var downloadURLField = rootView.Q<TextField>("DownloadURL");
+            if (string.IsNullOrEmpty(path))
+            {
+                downloadURLField.style.display = DisplayStyle.None;
+                return;
+            }
+            else
+            {
+                downloadURLField.style.display = DisplayStyle.Flex;
+            }
+
             var filePathField = rootView.Q<TextField>("FilePath");
             filePathField.value = path;
 
             //ダウンロードURL
-            var downloadURLField = rootView.Q<TextField>("DownloadURL");
-            var detailView = rootView.Q<VisualElement>("DetailView");
 
+            var detailView = rootView.Q<VisualElement>("DetailView");
             var vendorInfo = detailView.Q<Label>("VendorInfo");
             var vendor = Vendor.Unknown;
+
+
             downloadURLField.RegisterValueChangedCallback((evt) =>
             {
                 if (!string.IsNullOrEmpty(downloadURLField.value) && downloadURLField.value.StartsWith("https://"))
@@ -64,12 +88,30 @@ namespace sh0uRoom.AssetLinker
 
             //ファイルパス
             var filePathsFoldout = detailView.Q<Foldout>("FilePaths");
-            var filePaths = AssetDatabase.FindAssets("", new string[] { path });
-            foreach (var filePath in filePaths)
+            var filePaths = AssetDatabase.FindAssets("", new string[] { path }); //GUIDなので後でパスに変換する
+            // var fileToggles = new bool[filePaths.Length];
+            // var targetPaths = new string[filePaths.Length];
+            //dictionaryに変更
+            var fileToggles = new Dictionary<string, bool>();
+            for (int i = 0; i < filePaths.Length; i++)
             {
-                var pathStr = AssetDatabase.GUIDToAssetPath(filePath);
+                var filePath = filePaths[i];
+                var pathStr = AssetDatabase.GUIDToAssetPath(filePath); //これをtargetPathsに追加する
                 var item = linkerItemAsset.CloneTree();
                 var toggleField = item.Q<VisualElement>("ItemView").Q<Toggle>("IsLink");
+                fileToggles.Add(pathStr, true);
+                toggleField.RegisterValueChangedCallback((evt) =>
+                {
+                    if (evt.newValue)
+                    {
+                        fileToggles[pathStr] = true;
+                    }
+                    else
+                    {
+                        fileToggles[pathStr] = false;
+                    }
+                });
+
                 toggleField.Q<Label>("Path").text = pathStr;
                 filePathsFoldout.contentContainer.Add(item);
             }
@@ -78,7 +120,15 @@ namespace sh0uRoom.AssetLinker
             var createButton = rootView.Q<Button>("LinkButton");
             createButton.RegisterCallback<ClickEvent>((evt) =>
             {
-                var linkerData = new LinkerData(downloadURLField.value, licenseURLField.value, vendor, isFreeToggle.value, filePaths);
+                var linkerData = new LinkerData
+                {
+                    DownloadURL = downloadURLField.value,
+                    LicenseURL = licenseURLField.value,
+                    Vendor = vendor,
+                    IsFree = isFreeToggle.value,
+                    Paths = fileToggles.Where(x => x.Value).Select(x => x.Key).ToArray()
+                };
+                Debug.Log($"targetPaths: {linkerData.Paths[0]}");
                 if (CreateLink(linkerData))
                 {
                     Debug.Log("Link created!");
@@ -110,20 +160,24 @@ namespace sh0uRoom.AssetLinker
 
         private bool CreateLink(LinkerData data)
         {
+            Debug.Log($"license: {data.LicenseURL}");
+            Debug.Log($"download: {data.DownloadURL}");
+            Debug.Log($"vendor: {data.Vendor}");
+            Debug.Log($"isFree: {data.IsFree}");
+            foreach (var path in data.Paths)
+            {
+                Debug.Log($"path: {path}");
+            }
             try
             {
                 var exportPath = $"{Application.productName}.astlnk";
 
-                //JSON形式で出力
+                // JSON形式で出力
                 var json = JsonUtility.ToJson(data);
+                Debug.Log("Generated JSON: " + json);
+
+                // ファイルにJSONを書き込む
                 System.IO.File.WriteAllText(exportPath, json);
-
-                //ファイルが存在するか確認
-                if (!System.IO.File.Exists(exportPath))
-                {
-                    return false;
-                }
-
                 return true;
             }
             catch (Exception e)
