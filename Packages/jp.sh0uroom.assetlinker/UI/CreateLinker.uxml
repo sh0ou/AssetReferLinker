@@ -1,7 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
     <ui:VisualElement name="View" style="flex-grow: 1;">
-        <ui:TextField label="Asset File Path" value="Asset/TestAsset/" readonly="true" picking-mode="Ignore" name="FilePath" style="opacity: 0.5;" />
-        <ui:TextField picking-mode="Ignore" label="Download URL" keyboard-type="URL" name="DownloadURL" focusable="true" style="display: flex; visibility: visible; overflow: hidden; opacity: 1;" />
+        <ui:TextField label="Asset File Path" value="NOT SELECTED" readonly="true" picking-mode="Ignore" name="FilePath" style="opacity: 0.5;" />
+        <ui:TextField picking-mode="Ignore" label="Download URL" keyboard-type="URL" name="DownloadURL" focusable="true" style="display: none; visibility: visible; overflow: hidden; opacity: 1;" />
         <ui:VisualElement name="DetailView" style="flex-grow: 1; display: none;">
             <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="VendorInfo" style="padding-top: 8px; padding-left: 4px; padding-right: 4px; margin-top: 0; margin-bottom: 0; margin-right: 0; margin-left: 0; padding-bottom: 8px; color: rgb(255, 255, 255); -unity-text-align: upper-center; display: flex;" />
             <ui:TextField picking-mode="Ignore" label="License URL" name="LicenseURL" keyboard-type="URL" style="display: flex;" />
