@@ -14,31 +14,6 @@ namespace sh0uRoom.AssetLinker
             window.titleContent = new GUIContent("LinkerViewer");
         }
 
-        [InitializeOnLoadMethod]
-        private static void Initialize()
-        {
-            // missingがある場合はウインドウを開く
-            var linkerDatas = System.IO.Directory.GetFiles("AssetLinker", "*.astlnk");
-            var missingCount = 0;
-            foreach (var data in linkerDatas)
-            {
-                var linker = JsonConvert.DeserializeObject<LinkerData>(System.IO.File.ReadAllText(data));
-                foreach (var path in linker.Paths)
-                {
-                    if (!System.IO.File.Exists(path) && !System.IO.Directory.Exists(path))
-                    {
-                        missingCount++;
-                        break;
-                    }
-                }
-            }
-
-            if (missingCount > 0)
-            {
-                CreateWindow();
-            }
-        }
-
         private void OnEnable()
         {
             var rootUxml = linkerViewerUxml.CloneTree();
@@ -184,5 +159,34 @@ namespace sh0uRoom.AssetLinker
 
         [SerializeField] private VisualTreeAsset linkerViewerUxml;
         [SerializeField] private VisualTreeAsset linkerViewerItemUxml;
+    }
+
+    [InitializeOnLoad]
+    public class LinkerViewerLoader
+    {
+        static LinkerViewerLoader()
+        {
+            // missingがある場合はウインドウを開く
+            var linkerDatas = System.IO.Directory.GetFiles("AssetLinker", "*.astlnk");
+            var missingCount = 0;
+            foreach (var data in linkerDatas)
+            {
+                var linker = JsonConvert.DeserializeObject<LinkerData>(System.IO.File.ReadAllText(data));
+                foreach (var path in linker.Paths)
+                {
+                    if (!System.IO.File.Exists(path) && !System.IO.Directory.Exists(path))
+                    {
+                        missingCount++;
+                        break;
+                    }
+                }
+            }
+
+            if (missingCount > 0)
+            {
+                LinkerViewer.CreateWindow();
+            }
+        }
+
     }
 }
