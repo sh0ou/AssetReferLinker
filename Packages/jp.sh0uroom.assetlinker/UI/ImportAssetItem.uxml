@@ -2,7 +2,7 @@
     <ui:VisualElement name="ItemView" style="flex-grow: 0; background-color: rgba(0, 0, 0, 0.2);">
         <ui:VisualElement name="InfoView" style="flex-grow: 0; flex-shrink: 1; padding-top: 4px; padding-bottom: 4px; padding-right: 0; padding-left: 0;">
             <ui:Label tabindex="-1" text="TextMesh Pro" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AssetName" style="padding-top: 3px; padding-right: 3px; padding-bottom: 3px; padding-left: 3px;" />
-            <ui:Label tabindex="-1" text="AssetStore / 0.9GB" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Info" style="padding-top: 0; padding-right: 3px; padding-bottom: 0; padding-left: 3px; font-size: 10px;" />
+            <ui:Label tabindex="-1" text="AssetStore" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Info" style="padding-top: 0; padding-right: 3px; padding-bottom: 0; padding-left: 3px; font-size: 10px;" />
         </ui:VisualElement>
         <ui:VisualElement name="ActionView" style="flex-direction: row;">
             <ui:Button text="Download" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DownloadButton" />
