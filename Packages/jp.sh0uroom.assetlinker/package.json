@@ -15,6 +15,7 @@
   "unity": "2022.3",
   "hideInEditor": false,
   "dependencies": {
-    "com.unity.modules.uielements": ""
+    "com.unity.modules.uielements": "",
+    "com.unity.nuget.newtonsoft-json": ""
   }
 }

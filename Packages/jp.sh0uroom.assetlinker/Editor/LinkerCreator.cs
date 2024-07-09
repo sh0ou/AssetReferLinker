@@ -3,8 +3,8 @@ using UnityEditor;
 using UnityEngine.UIElements;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using System;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace sh0uRoom.AssetLinker
 {
@@ -89,9 +89,6 @@ namespace sh0uRoom.AssetLinker
             //ファイルパス
             var filePathsFoldout = detailView.Q<Foldout>("FilePaths");
             var filePaths = AssetDatabase.FindAssets("", new string[] { path }); //GUIDなので後でパスに変換する
-            // var fileToggles = new bool[filePaths.Length];
-            // var targetPaths = new string[filePaths.Length];
-            //dictionaryに変更
             var fileToggles = new Dictionary<string, bool>();
             for (int i = 0; i < filePaths.Length; i++)
             {
@@ -128,10 +125,11 @@ namespace sh0uRoom.AssetLinker
                     IsFree = isFreeToggle.value,
                     Paths = fileToggles.Where(x => x.Value).Select(x => x.Key).ToArray()
                 };
-                Debug.Log($"targetPaths: {linkerData.Paths[0]}");
-                if (CreateLink(linkerData))
+                CreateLink(linkerData);
+                if (ValidateFile())
                 {
-                    Debug.Log("Link created!");
+                    // ポップアップ表示
+                    EditorUtility.DisplayDialog("LinkerCreator", "Link created!", "OK");
                 }
                 else
                 {
@@ -141,7 +139,7 @@ namespace sh0uRoom.AssetLinker
 
             //リンク情報
             var linkInfo = rootView.Q<Label>("LinkInfo");
-            if (System.IO.File.Exists($"{Application.productName}.astlnk"))
+            if (ValidateFile())
             {
                 linkInfo.text = "Linked!";
                 linkInfo.style.color = Color.green;
@@ -158,32 +156,37 @@ namespace sh0uRoom.AssetLinker
             rootVisualElement.Clear();
         }
 
-        private bool CreateLink(LinkerData data)
+        private static bool ValidateFile()
         {
-            Debug.Log($"license: {data.LicenseURL}");
-            Debug.Log($"download: {data.DownloadURL}");
-            Debug.Log($"vendor: {data.Vendor}");
-            Debug.Log($"isFree: {data.IsFree}");
-            foreach (var path in data.Paths)
-            {
-                Debug.Log($"path: {path}");
-            }
+            var path = $"{Application.productName}.astlnk";
+            return System.IO.File.Exists(path) && System.IO.File.ReadAllText(path).Contains("DownloadURL");
+        }
+
+        private void CreateLink(LinkerData data)
+        {
+            // Debug.Log($"license: {data.LicenseURL}");
+            // Debug.Log($"download: {data.DownloadURL}");
+            // Debug.Log($"vendor: {data.Vendor}");
+            // Debug.Log($"isFree: {data.IsFree}");
+            // foreach (var path in data.Paths)
+            // {
+            //     Debug.Log($"path: {path}");
+            // }
             try
             {
                 var exportPath = $"{Application.productName}.astlnk";
 
                 // JSON形式で出力
-                var json = JsonUtility.ToJson(data);
+                // var json = JsonUtility.ToJson(data);
+                var json = JsonConvert.SerializeObject(data, Formatting.Indented);
                 Debug.Log("Generated JSON: " + json);
 
                 // ファイルにJSONを書き込む
                 System.IO.File.WriteAllText(exportPath, json);
-                return true;
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 Debug.LogError(e);
-                return false;
             }
         }
 
