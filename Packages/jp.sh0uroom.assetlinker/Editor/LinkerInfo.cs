@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace sh0uRoom.AssetLinker
@@ -37,45 +36,20 @@ namespace sh0uRoom.AssetLinker
         VKetStore
     }
 
+    [System.Serializable]
     public class LinkerData
     {
-        public string DownloadURL
-        {
-            get => DownloadURL;
-            set
-            {
-                if (CheckURL(value))
-                    LicenseURL = value;
-            }
-        }
-        public string LicenseURL
-        {
-            get => LicenseURL;
-            set
-            {
-                if (CheckURL(value))
-                    LicenseURL = value;
-            }
-        }
+        public string DownloadURL { get; set; }
+        public string LicenseURL { get; set; }
         public Vendor Vendor { get; set; }
         public bool IsFree { get; set; }
         public string[] Paths { get; set; }
-
-        public LinkerData(string downloadURL, string licenseURL, Vendor vendor, bool isFree, string[] paths)
-        {
-            DownloadURL = downloadURL;
-            LicenseURL = licenseURL;
-            Vendor = vendor;
-            IsFree = isFree;
-            Paths = paths;
-        }
 
         public bool CheckURL(string value)
         {
             if (string.IsNullOrEmpty(value) || !value.StartsWith("https://"))
             {
-                throw new ArgumentException("Invalid URL");
-                return false;
+                throw new System.ArgumentException("Invalid URL");
             }
             return true;
         }
