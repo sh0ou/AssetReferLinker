@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace sh0uRoom.AssetLinker
 {
     public static class LinkerInfo
@@ -26,6 +24,7 @@ namespace sh0uRoom.AssetLinker
         };
     }
 
+    [System.Serializable]
     public enum Vendor
     {
         Unknown,
@@ -44,14 +43,5 @@ namespace sh0uRoom.AssetLinker
         public Vendor Vendor { get; set; }
         public bool IsFree { get; set; }
         public string[] Paths { get; set; }
-
-        public bool CheckURL(string value)
-        {
-            if (string.IsNullOrEmpty(value) || !value.StartsWith("https://"))
-            {
-                throw new System.ArgumentException("Invalid URL");
-            }
-            return true;
-        }
     }
 }
