@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="Credit" style="flex-grow: 0; padding-top: 10px; padding-right: 0; padding-bottom: 10px; padding-left: 0;">
+        <ui:VisualElement name="Logo" style="flex-grow: 1; background-image: url(&quot;project://database/Packages/jp.sh0uroom.assetlinker/UI/logo.png?fileID=2800000&amp;guid=ebc993b3c2da7964f9a45e05d7fa74a0&amp;type=3#logo&quot;); -unity-slice-scale: 1px; -unity-background-scale-mode: scale-to-fit; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px; height: 50px; max-height: 50px; min-height: 50px;" />
+        <ui:Label tabindex="-1" text="(c)2024 sh0uRoom" parse-escape-sequences="true" display-tooltip-when-elided="true" style="-unity-text-align: upper-center; padding-top: 0; padding-right: 10px; padding-bottom: 10px; padding-left: 10px; font-size: 10px;" />
+    </ui:VisualElement>
+</ui:UXML>

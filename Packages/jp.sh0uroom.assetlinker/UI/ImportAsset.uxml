@@ -1,7 +1,9 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
-    <ui:VisualElement name="View" style="flex-grow: 1; margin-right: 5px; margin-left: 5px;">
-        <ui:Label tabindex="-1" text="2 file is missing!" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MissingInfo" style="color: rgb(238, 255, 0);" />
-        <ui:VisualElement style="flex-grow: 1;" />
-        <ui:Button text="Download All" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DownloadButton" />
+    <ui:Template name="Credit" src="project://database/Packages/jp.sh0uroom.assetlinker/UI/Credit.uxml?fileID=9197481963319205126&amp;guid=f9c3a6af0821505428255dd14c12084b&amp;type=3#Credit" />
+    <ui:Instance template="Credit" name="Credit" />
+    <ui:VisualElement name="View" style="flex-grow: 1; margin-right: 5px; margin-left: 5px; justify-content: space-between;">
+        <ui:Label tabindex="-1" text="All Asset is imported!" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MissingInfo" style="color: rgb(0, 255, 0); -unity-text-align: upper-center; padding-top: 5px; padding-right: 0; padding-bottom: 5px; padding-left: 0; -unity-font-style: bold;" />
+        <ui:ScrollView />
+        <ui:Toggle label="Don&apos;t show again" value="false" name="DontShow" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 5px; padding-bottom: 5px; align-self: flex-end;" />
     </ui:VisualElement>
 </ui:UXML>
