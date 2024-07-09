@@ -10,27 +10,17 @@ namespace sh0uRoom.AssetLinker
 {
     public class LinkerCreator : EditorWindow
     {
-        [MenuItem("Assets/AssetLinker/LinkerCreator")]
-        public static void Create()
+        [MenuItem("Assets/AssetLinker")]
+        public static void CreateWindow()
         {
             var window = GetWindow<LinkerCreator>();
-        }
-
-        [InitializeOnLoadMethod]
-        private static void Initialize()
-        {
-            //ウインドウが開かれてる場合は閉じる
-            var window = GetWindow<LinkerCreator>();
-            if (window != null)
-            {
-                window.Close();
-            }
+            window.titleContent = new GUIContent("LinkerCreator");
         }
 
         private void OnEnable()
         {
             //ルート要素の作成
-            var asset = linkerCreatorAsset.CloneTree();
+            var asset = linkerCreatorUxml.CloneTree();
             rootVisualElement.Add(asset);
             var rootView = asset.Q<VisualElement>("View");
             var path = AssetDatabase.GetAssetPath(Selection.activeObject);
@@ -45,28 +35,37 @@ namespace sh0uRoom.AssetLinker
             {
                 downloadURLField.style.display = DisplayStyle.Flex;
             }
-
             var filePathField = rootView.Q<TextField>("FilePath");
             filePathField.value = path;
 
-            //ダウンロードURL
-
             var detailView = rootView.Q<VisualElement>("DetailView");
+
+            //ダウンロードURL
             var vendorInfo = detailView.Q<Label>("VendorInfo");
             var vendor = Vendor.Unknown;
-
-
             downloadURLField.RegisterValueChangedCallback((evt) =>
             {
+                var back = downloadURLField.Q<VisualElement>(UI_TEXTBG_NAME);
                 if (!string.IsNullOrEmpty(downloadURLField.value) && downloadURLField.value.StartsWith("https://"))
                 {
                     detailView.style.display = DisplayStyle.Flex;
                     vendor = UpdateVendorInfo(downloadURLField, vendorInfo);
+                    ColorUtility.TryParseHtmlString("#2A2A2A", out Color color);
+                    back.style.backgroundColor = color;
                 }
                 else
                 {
                     detailView.style.display = DisplayStyle.None;
+                    ColorUtility.TryParseHtmlString("#320000", out Color color);
+                    back.style.backgroundColor = color;
                 }
+            });
+
+            //アセット名
+            var assetNameField = detailView.Q<TextField>("AssetName");
+            assetNameField.RegisterValueChangedCallback((evt) =>
+            {
+                OnAssetNameChanged(detailView, assetNameField);
             });
 
             //ライセンスURL
@@ -94,7 +93,7 @@ namespace sh0uRoom.AssetLinker
             {
                 var filePath = filePaths[i];
                 var pathStr = AssetDatabase.GUIDToAssetPath(filePath); //これをtargetPathsに追加する
-                var item = linkerItemAsset.CloneTree();
+                var item = linkerCreatorItemUxml.CloneTree();
                 var toggleField = item.Q<VisualElement>("ItemView").Q<Toggle>("IsLink");
                 fileToggles.Add(pathStr, true);
                 toggleField.RegisterValueChangedCallback((evt) =>
@@ -110,15 +109,19 @@ namespace sh0uRoom.AssetLinker
                 });
 
                 toggleField.Q<Label>("Path").text = pathStr;
-                filePathsFoldout.contentContainer.Add(item);
+                var container = filePathsFoldout.Q<ScrollView>().contentContainer;
+                container.Add(item);
             }
 
             //リンク作成
             var createButton = rootView.Q<Button>("LinkButton");
+
+            // createButton.focusable
             createButton.RegisterCallback<ClickEvent>((evt) =>
             {
                 var linkerData = new LinkerData
                 {
+                    Name = assetNameField.value,
                     DownloadURL = downloadURLField.value,
                     LicenseURL = licenseURLField.value,
                     Vendor = vendor,
@@ -126,10 +129,11 @@ namespace sh0uRoom.AssetLinker
                     Paths = fileToggles.Where(x => x.Value).Select(x => x.Key).ToArray()
                 };
                 CreateLink(linkerData);
-                if (ValidateFile())
+                if (ValidateFile(linkerData.Name))
                 {
                     // ポップアップ表示
                     EditorUtility.DisplayDialog("LinkerCreator", "Link created!", "OK");
+                    Close();
                 }
                 else
                 {
@@ -139,7 +143,7 @@ namespace sh0uRoom.AssetLinker
 
             //リンク情報
             var linkInfo = rootView.Q<Label>("LinkInfo");
-            if (ValidateFile())
+            if (ValidateFile(assetNameField.value))
             {
                 linkInfo.text = "Linked!";
                 linkInfo.style.color = Color.green;
@@ -151,14 +155,41 @@ namespace sh0uRoom.AssetLinker
             }
         }
 
+        private void OnAssetNameChanged(VisualElement detailView, TextField assetNameField)
+        {
+            var back = assetNameField.Q<VisualElement>(UI_TEXTBG_NAME);
+            var warningView = detailView.Q<HelpBox>("AssetNameWarning");
+            if (string.IsNullOrEmpty(assetNameField.value))
+            {
+                ColorUtility.TryParseHtmlString("#320000", out Color color);
+                back.style.backgroundColor = color;
+                warningView.style.display = DisplayStyle.None;
+                return;
+            }
+            else
+            {
+                ColorUtility.TryParseHtmlString("#2A2A2A", out Color color);
+                back.style.backgroundColor = color;
+            }
+
+            if (!ValidateAssetName(assetNameField.value))
+            {
+                warningView.style.display = DisplayStyle.Flex;
+            }
+            else
+            {
+                warningView.style.display = DisplayStyle.None;
+            }
+        }
+
         private void OnDisable()
         {
             rootVisualElement.Clear();
         }
 
-        private static bool ValidateFile()
+        private static bool ValidateFile(string name)
         {
-            var path = $"{Application.productName}.astlnk";
+            var path = $"AssetLinker/{name}.astlnk";
             return System.IO.File.Exists(path) && System.IO.File.ReadAllText(path).Contains("DownloadURL");
         }
 
@@ -174,7 +205,7 @@ namespace sh0uRoom.AssetLinker
             // }
             try
             {
-                var exportPath = $"{Application.productName}.astlnk";
+                var path = $"{FOLDER_NAME}/{data.Name}.astlnk";
 
                 // JSON形式で出力
                 // var json = JsonUtility.ToJson(data);
@@ -182,7 +213,11 @@ namespace sh0uRoom.AssetLinker
                 Debug.Log("Generated JSON: " + json);
 
                 // ファイルにJSONを書き込む
-                System.IO.File.WriteAllText(exportPath, json);
+                if (!System.IO.Directory.Exists(FOLDER_NAME))
+                {
+                    System.IO.Directory.CreateDirectory(FOLDER_NAME);
+                }
+                System.IO.File.WriteAllText(path, json);
             }
             catch (System.Exception e)
             {
@@ -236,7 +271,17 @@ namespace sh0uRoom.AssetLinker
             return false;
         }
 
-        [SerializeField] private VisualTreeAsset linkerCreatorAsset;
-        [SerializeField] private VisualTreeAsset linkerItemAsset;
+        private bool ValidateAssetName(string name)
+        {
+
+            //英数字と-,_,スペースのみ許可
+            var regex = new Regex(@"^[a-zA-Z0-9-_ ]+$");
+            return regex.IsMatch(name);
+        }
+
+        [SerializeField] private VisualTreeAsset linkerCreatorUxml;
+        [SerializeField] private VisualTreeAsset linkerCreatorItemUxml;
+        private const string FOLDER_NAME = "AssetLinker";
+        private const string UI_TEXTBG_NAME = "unity-text-input";
     }
 }
