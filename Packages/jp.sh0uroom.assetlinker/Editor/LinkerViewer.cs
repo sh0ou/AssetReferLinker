@@ -7,7 +7,7 @@ namespace sh0uRoom.AssetLinker
 {
     public class LinkerViewer : EditorWindow
     {
-        [MenuItem("Window/AssetLinker")]
+        [MenuItem("Window/AssetLinker/Show Linker")]
         public static void CreateWindow()
         {
             var window = GetWindow<LinkerViewer>();
@@ -21,101 +21,124 @@ namespace sh0uRoom.AssetLinker
             var itemRootView = rootUxml.Q<ScrollView>();
 
             var missingCount = 0;
-            var linkerDatas = System.IO.Directory.GetFiles("AssetLinker", "*.astlnk");
-            foreach (var data in linkerDatas)
+            var missingInfo = rootUxml.Q<Label>("MissingInfo");
+
+            //ディレクトリが存在するか確認
+            if (System.IO.Directory.Exists("AssetLinker"))
             {
-                var linker = LoadLinkerData(data);
-                if (linker == null)
+                var linkerDatas = System.IO.Directory.GetFiles("AssetLinker", "*.astlnk");
+                foreach (var data in linkerDatas)
                 {
-                    continue;
-                }
-
-                var itemUxml = linkerViewerItemUxml.CloneTree();
-                var itemView = itemUxml.Q<VisualElement>("ItemView");
-
-                itemView.Q<Foldout>().text = linker.Name;
-                var container = itemView.contentContainer;
-
-                var vendorField = container.Q<Label>("VendorInfo");
-                vendorField.text = $"{linker.Vendor} / {(linker.IsFree ? "Free" : "Paid")}";
-
-                var downloadButton = container.Q<VisualElement>("ActionView").Q<Button>("Download");
-                downloadButton.clicked += () =>
-                {
-                    var url = linker.DownloadURL;
-                    Application.OpenURL(url);
-                };
-                var licenseButton = container.Q<VisualElement>("ActionView").Q<Button>("License");
-                licenseButton.clicked += () =>
-                {
-                    var url = linker.LicenseURL;
-                    Application.OpenURL(url);
-                };
-                var unlinkButton = container.Q<VisualElement>("ActionView").Q<Button>("Unlink");
-                unlinkButton.clicked += () =>
-                {
-                    if (EditorUtility.DisplayDialog("Unlink", "Are you sure to unlink this asset?", "Yes", "No"))
+                    var linker = LoadLinkerData(data);
+                    if (linker == null)
                     {
-                        itemRootView.Remove(itemUxml);
-                        System.IO.File.Delete(data);
+                        continue;
                     }
-                };
 
-                var isMissingFound = false;
-                var pathsView = container.Q<Foldout>("Paths").Q<ScrollView>();
-                foreach (var path in linker.Paths)
-                {
-                    var pathLabel = new Label(path);
-                    //存在しないパスまたはディレクトリは黄色で表示
-                    if (!ValidateFile(path) && !ValidateDirectory(path))
+                    var itemUxml = linkerViewerItemUxml.CloneTree();
+                    var itemView = itemUxml.Q<VisualElement>("ItemView");
+
+                    itemView.Q<Foldout>().text = linker.Name;
+                    var container = itemView.contentContainer;
+
+                    var vendorField = container.Q<Label>("VendorInfo");
+                    vendorField.text = $"{linker.Vendor} / {(linker.IsFree ? "Free" : "Paid")}";
+
+                    var downloadButton = container.Q<VisualElement>("ActionView").Q<Button>("Download");
+                    downloadButton.clicked += () =>
                     {
-                        pathLabel.style.color = Color.yellow;
-                        missingCount++;
-                        isMissingFound = true;
+                        var url = linker.DownloadURL;
+                        Application.OpenURL(url);
+                    };
+                    var licenseButton = container.Q<VisualElement>("ActionView").Q<Button>("License");
+                    licenseButton.clicked += () =>
+                    {
+                        var url = linker.LicenseURL;
+                        Application.OpenURL(url);
+                    };
+                    var unlinkButton = container.Q<VisualElement>("ActionView").Q<Button>("Unlink");
+                    unlinkButton.clicked += () =>
+                    {
+                        if (EditorUtility.DisplayDialog("Unlink", "Are you sure to unlink this asset?", "Yes", "No"))
+                        {
+                            itemRootView.Remove(itemUxml);
+                            System.IO.File.Delete(data);
+                        }
+                    };
+
+                    var isMissingFound = false;
+                    var pathsView = container.Q<Foldout>("Paths").Q<ScrollView>();
+                    foreach (var path in linker.Paths)
+                    {
+                        var pathLabel = new Label(path);
+                        //存在しないパスまたはディレクトリは黄色で表示
+                        if (!ValidateFile(path) && !ValidateDirectory(path))
+                        {
+                            pathLabel.style.color = Color.yellow;
+                            missingCount++;
+                            isMissingFound = true;
+                        }
+                        else
+                        {
+                            pathLabel.style.color = Color.green;
+                        }
+
+                        pathsView.contentContainer.Add(pathLabel);
+                    }
+                    if (isMissingFound)
+                    {
+                        var color = new Color(1f, 1f, 0f, 0.5f);
+                        itemView.Q<Foldout>().style.borderTopColor = color;
+                        itemView.Q<Foldout>().style.borderBottomColor = color;
+                        itemView.Q<Foldout>().style.borderLeftColor = color;
+                        itemView.Q<Foldout>().style.borderRightColor = color;
                     }
                     else
                     {
-                        pathLabel.style.color = Color.green;
+                        var color = new Color(0f, 1f, 0f, 0.5f);
+                        itemView.Q<Foldout>().style.borderTopColor = color;
+                        itemView.Q<Foldout>().style.borderBottomColor = color;
+                        itemView.Q<Foldout>().style.borderLeftColor = color;
+                        itemView.Q<Foldout>().style.borderRightColor = color;
                     }
 
-                    pathsView.contentContainer.Add(pathLabel);
+                    itemRootView.Add(itemUxml);
                 }
-                if (isMissingFound)
+
+                if (linkerDatas.Length == 0)
                 {
-                    var color = new Color(1f, 1f, 0f, 0.5f);
-                    itemView.Q<Foldout>().style.borderTopColor = color;
-                    itemView.Q<Foldout>().style.borderBottomColor = color;
-                    itemView.Q<Foldout>().style.borderLeftColor = color;
-                    itemView.Q<Foldout>().style.borderRightColor = color;
+                    missingInfo.text = "No linker data found.";
+                    missingInfo.style.color = Color.yellow;
+                }
+                else if (missingCount > 0)
+                {
+                    missingInfo.text = $"{missingCount} Asset is missing";
+                    missingInfo.style.color = Color.yellow;
                 }
                 else
                 {
-                    var color = new Color(0f, 1f, 0f, 0.5f);
-                    itemView.Q<Foldout>().style.borderTopColor = color;
-                    itemView.Q<Foldout>().style.borderBottomColor = color;
-                    itemView.Q<Foldout>().style.borderLeftColor = color;
-                    itemView.Q<Foldout>().style.borderRightColor = color;
+                    missingInfo.text = "All Asset is imported!";
+                    missingInfo.style.color = Color.green;
                 }
-
-                itemRootView.Add(itemUxml);
-            }
-
-            var missingInfo = rootUxml.Q<Label>("MissingInfo");
-            if (linkerDatas.Length == 0)
-            {
-                missingInfo.text = "No linker data found.";
-                missingInfo.style.color = Color.yellow;
-            }
-            else if (missingCount > 0)
-            {
-                missingInfo.text = $"{missingCount} Asset is missing";
-                missingInfo.style.color = Color.yellow;
             }
             else
             {
-                missingInfo.text = "All Asset is imported!";
-                missingInfo.style.color = Color.green;
+                missingInfo.text = "No linker directory found.";
+                missingInfo.style.color = Color.yellow;
             }
+
+            var dontShowField = rootUxml.Q<Toggle>("DontShow");
+            dontShowField.RegisterValueChangedCallback((evt) =>
+            {
+                if (evt.newValue)
+                {
+                    settings.IsAutoShowMissing = false;
+                }
+                else
+                {
+                    settings.IsAutoShowMissing = true;
+                }
+            });
         }
 
         private void OnDisable()
@@ -126,10 +149,7 @@ namespace sh0uRoom.AssetLinker
         private LinkerData LoadLinkerData(string path)
         {
             // var path = $"AssetLinker/{name}.astlnk";
-            if (!ValidateFile(path))
-            {
-                return null;
-            }
+            if (!ValidateFile(path)) return null;
 
             var json = System.IO.File.ReadAllText(path);
             return JsonConvert.DeserializeObject<LinkerData>(json);
@@ -159,16 +179,33 @@ namespace sh0uRoom.AssetLinker
 
         [SerializeField] private VisualTreeAsset linkerViewerUxml;
         [SerializeField] private VisualTreeAsset linkerViewerItemUxml;
+        [SerializeField] private LinkerSettings settings;
     }
 
     [InitializeOnLoad]
     public class LinkerViewerLoader
     {
-        static LinkerViewerLoader()
+        static LinkerViewerLoader() => EditorApplication.delayCall += ShowOnStartup;
+
+        static void ShowOnStartup()
         {
+            var isAlreadyShown = SessionState.GetBool(AlreadyShown, false);
+            if (!isAlreadyShown)
+            {
+                OnLinkerViewerLoader();
+                SessionState.SetBool(AlreadyShown, true);
+            }
+        }
+
+        static void OnLinkerViewerLoader()
+        {
+            if (!System.IO.Directory.Exists("AssetLinker")) return;
+
+            Debug.Log("Validate Assets...");
+
             // missingがある場合はウインドウを開く
             var linkerDatas = System.IO.Directory.GetFiles("AssetLinker", "*.astlnk");
-            var missingCount = 0;
+            var isHasmissing = false;
             foreach (var data in linkerDatas)
             {
                 var linker = JsonConvert.DeserializeObject<LinkerData>(System.IO.File.ReadAllText(data));
@@ -176,17 +213,15 @@ namespace sh0uRoom.AssetLinker
                 {
                     if (!System.IO.File.Exists(path) && !System.IO.Directory.Exists(path))
                     {
-                        missingCount++;
+                        isHasmissing = true;
                         break;
                     }
                 }
             }
 
-            if (missingCount > 0)
-            {
-                LinkerViewer.CreateWindow();
-            }
+            if (isHasmissing) LinkerViewer.CreateWindow();
         }
 
+        private const string AlreadyShown = "com.example.welcome_window_shown";
     }
 }
