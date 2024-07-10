@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace sh0uRoom.AssetLinker
 {
-    public class LinkerSettings : ScriptableObject
+    public class LinkerSettings : SingletonScriptableObject<LinkerSettings>
     {
         private SystemLanguage language;
 

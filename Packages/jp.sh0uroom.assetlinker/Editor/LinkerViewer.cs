@@ -52,13 +52,17 @@ namespace sh0uRoom.AssetLinker
                     var container = itemView.contentContainer;
 
                     var vendorField = container.Q<Label>("VendorInfo");
-                    vendorField.text = $"{linker.Vendor} / {(linker.IsFree ? "Free" : "Paid")}";
+
+                    var str_free = Localizer.Instance.Translate("FREE");
+                    var str_paid = Localizer.Instance.Translate("PAID");
+                    vendorField.text = $"{linker.Vendor} / {(linker.IsFree ? str_free : str_paid)}";
 
                     var downloadButton = container.Q<VisualElement>("ActionView").Q<Button>("Download");
                     downloadButton.clicked += () =>
                     {
                         var url = linker.DownloadURL;
-                        if (EditorUtility.DisplayDialog("Open Download URL", $"Open this URL?\n{url}", "Yes", "No"))
+                        var message = Localizer.Instance.Translate("OPENURL_MESSAGE");
+                        if (EditorUtility.DisplayDialog("Open URL", $"{message}\n{url}", "Yes", "No"))
                         {
                             Application.OpenURL(url);
                         }
@@ -75,7 +79,8 @@ namespace sh0uRoom.AssetLinker
                     licenseButton.clicked += () =>
                     {
                         var url = linker.LicenseURL;
-                        if (EditorUtility.DisplayDialog("Open Download URL", $"Open this URL?\n{url}", "Yes", "No"))
+                        var message = Localizer.Instance.Translate("OPENURL_MESSAGE");
+                        if (EditorUtility.DisplayDialog("Open URL", $"{message}\n{url}", "Yes", "No"))
                         {
                             Application.OpenURL(url);
                         }
@@ -83,7 +88,8 @@ namespace sh0uRoom.AssetLinker
                     var unlinkButton = container.Q<VisualElement>("ActionView").Q<Button>("Unlink");
                     unlinkButton.clicked += () =>
                     {
-                        if (EditorUtility.DisplayDialog("Unlink", "Are you sure to unlink this asset?", "Yes", "No"))
+                        var message = Localizer.Instance.Translate("UNLINK_MESSAGE");
+                        if (EditorUtility.DisplayDialog("Unlink", message, "Yes", "No"))
                         {
                             itemRootView.Remove(itemUxml);
                             System.IO.File.Delete(data);
@@ -131,36 +137,41 @@ namespace sh0uRoom.AssetLinker
 
                 if (linkerDatas.Length == 0)
                 {
-                    missingInfo.text = "No linker data found.";
+                    var message = Localizer.Instance.Translate("MISSINGINFO_ERROR");
+                    missingInfo.text = message;
                     missingInfo.style.color = Color.yellow;
                 }
                 else if (missingCount > 0)
                 {
-                    missingInfo.text = $"{missingCount} Asset is missing";
+                    var message = Localizer.Instance.Translate("MISSINGINFO_FOUND");
+                    missingInfo.text = $"{missingCount} {message}";
                     missingInfo.style.color = Color.yellow;
                 }
                 else
                 {
-                    missingInfo.text = "All Asset is imported!";
+                    var message = Localizer.Instance.Translate("MISSINGINFO_OK");
+                    missingInfo.text = message;
                     missingInfo.style.color = Color.green;
                 }
             }
             else
             {
-                missingInfo.text = "No linker directory found.";
+                var message = Localizer.Instance.Translate("MISSINGINFO_ERROR");
+                missingInfo.text = message;
                 missingInfo.style.color = Color.yellow;
             }
 
             var dontShowField = rootUxml.Q<Toggle>("DontShow");
+            dontShowField.label = Localizer.Instance.Translate("DONTSHOWAGAIN");
             dontShowField.RegisterValueChangedCallback((evt) =>
             {
                 if (evt.newValue)
                 {
-                    settings.IsAutoShowMissing = false;
+                    LinkerSettings.Instance.IsAutoShowMissing = false;
                 }
                 else
                 {
-                    settings.IsAutoShowMissing = true;
+                    LinkerSettings.Instance.IsAutoShowMissing = true;
                 }
             });
         }
@@ -198,7 +209,6 @@ namespace sh0uRoom.AssetLinker
 
         [SerializeField] private VisualTreeAsset linkerViewerUxml;
         [SerializeField] private VisualTreeAsset linkerViewerItemUxml;
-        [SerializeField] private LinkerSettings settings;
     }
 
     [InitializeOnLoad]
@@ -241,7 +251,6 @@ namespace sh0uRoom.AssetLinker
             if (isHasmissing) LinkerViewer.CreateWindow();
         }
 
-        [SerializeField] private Localizer localizer;
         private const string AlreadyShown = "com.example.welcome_window_shown";
     }
 }

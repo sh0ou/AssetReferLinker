@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace sh0uRoom.AssetLinker
 {
-    public class Localizer : Editor
+    public class Localizer : SingletonEditor<Localizer>
     {
         public void LoadLocalization()
         {
@@ -41,20 +41,19 @@ namespace sh0uRoom.AssetLinker
         {
             if (localizationDic.TryGetValue(id, out var dic))
             {
-                if (dic.TryGetValue(settings.Language, out var text))
+                if (dic.TryGetValue(LinkerSettings.Instance.Language, out var text))
                 {
                     return text;
                 }
                 else
                 {
-                    return $"Missing: {settings.Language}";
+                    return $"Missing: {LinkerSettings.Instance.Language}";
                 }
             }
             return $"Missing: {id}";
         }
 
         [SerializeField] private TextAsset csv;
-        [SerializeField] private LinkerSettings settings;
         private Dictionary<string, Dictionary<SystemLanguage, string>> localizationDic;
     }
 }
