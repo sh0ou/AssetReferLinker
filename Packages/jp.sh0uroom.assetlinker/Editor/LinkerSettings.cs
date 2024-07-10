@@ -11,7 +11,6 @@ namespace sh0uRoom.AssetLinker
             get => language;
             set
             {
-                //English,Japanese以外の場合はログを出してEnglishに設定
                 if (value != SystemLanguage.English &&
                     value != SystemLanguage.Japanese)
                 {
