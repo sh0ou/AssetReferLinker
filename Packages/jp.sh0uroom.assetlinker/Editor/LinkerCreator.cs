@@ -195,14 +195,6 @@ namespace sh0uRoom.AssetLinker
 
         private void CreateLink(LinkerData data)
         {
-            // Debug.Log($"license: {data.LicenseURL}");
-            // Debug.Log($"download: {data.DownloadURL}");
-            // Debug.Log($"vendor: {data.Vendor}");
-            // Debug.Log($"isFree: {data.IsFree}");
-            // foreach (var path in data.Paths)
-            // {
-            //     Debug.Log($"path: {path}");
-            // }
             try
             {
                 var path = $"{FOLDER_NAME}/{data.Name}.astlnk";
@@ -210,7 +202,7 @@ namespace sh0uRoom.AssetLinker
                 // JSON形式で出力
                 // var json = JsonUtility.ToJson(data);
                 var json = JsonConvert.SerializeObject(data, Formatting.Indented);
-                Debug.Log("Generated JSON: " + json);
+                // Debug.Log("Generated JSON: " + json);
 
                 // ファイルにJSONを書き込む
                 if (!System.IO.Directory.Exists(FOLDER_NAME))
