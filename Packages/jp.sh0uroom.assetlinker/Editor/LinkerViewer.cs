@@ -98,7 +98,7 @@ namespace sh0uRoom.AssetLinker
                         //存在しないパスまたはディレクトリは黄色で表示
                         if (!ValidateFile(path) && !ValidateDirectory(path))
                         {
-                            pathLabel.style.color = Color.yellow;
+                            pathLabel.style.color = Color.red;
                             missingCount++;
                             isMissingFound = true;
                         }
@@ -241,6 +241,7 @@ namespace sh0uRoom.AssetLinker
             if (isHasmissing) LinkerViewer.CreateWindow();
         }
 
+        [SerializeField] private Localizer localizer;
         private const string AlreadyShown = "com.example.welcome_window_shown";
     }
 }
