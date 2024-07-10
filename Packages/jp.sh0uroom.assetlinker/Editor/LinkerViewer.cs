@@ -16,6 +16,16 @@ namespace sh0uRoom.AssetLinker
 
         private void OnEnable()
         {
+            Refresh();
+        }
+
+        private void OnDisable()
+        {
+            rootVisualElement.Clear();
+        }
+
+        private void Refresh()
+        {
             var rootUxml = linkerViewerUxml.CloneTree();
             rootVisualElement.Add(rootUxml);
             var itemRootView = rootUxml.Q<ScrollView>();
@@ -48,13 +58,27 @@ namespace sh0uRoom.AssetLinker
                     downloadButton.clicked += () =>
                     {
                         var url = linker.DownloadURL;
-                        Application.OpenURL(url);
+                        if (EditorUtility.DisplayDialog("Open Download URL", $"Open this URL?\n{url}", "Yes", "No"))
+                        {
+                            Application.OpenURL(url);
+                        }
                     };
                     var licenseButton = container.Q<VisualElement>("ActionView").Q<Button>("License");
+                    if (string.IsNullOrEmpty(linker.LicenseURL))
+                    {
+                        licenseButton.SetEnabled(false);
+                    }
+                    else
+                    {
+                        licenseButton.SetEnabled(true);
+                    }
                     licenseButton.clicked += () =>
                     {
                         var url = linker.LicenseURL;
-                        Application.OpenURL(url);
+                        if (EditorUtility.DisplayDialog("Open Download URL", $"Open this URL?\n{url}", "Yes", "No"))
+                        {
+                            Application.OpenURL(url);
+                        }
                     };
                     var unlinkButton = container.Q<VisualElement>("ActionView").Q<Button>("Unlink");
                     unlinkButton.clicked += () =>
@@ -139,11 +163,6 @@ namespace sh0uRoom.AssetLinker
                     settings.IsAutoShowMissing = true;
                 }
             });
-        }
-
-        private void OnDisable()
-        {
-            rootVisualElement.Clear();
         }
 
         private LinkerData LoadLinkerData(string path)
