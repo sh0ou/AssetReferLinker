@@ -9,11 +9,12 @@ namespace sh0uRoom.AssetLinker
         [MenuItem("Window/AssetLinker/Settings")]
         public static void OpenSettings()
         {
-            var file = AssetDatabase.FindAssets("t:LinkerSettings")[0];
-            var settings = AssetDatabase.LoadAssetAtPath<LinkerSettings>(AssetDatabase.GUIDToAssetPath(file));
+            var settings = LinkerSettings.instance;
             if (settings)
             {
                 Selection.activeObject = settings;
+                EditorUtility.FocusProjectWindow();
+                EditorGUIUtility.PingObject(settings);
             }
             else
             {

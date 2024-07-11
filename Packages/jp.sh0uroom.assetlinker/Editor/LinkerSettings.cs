@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace sh0uRoom.AssetLinker
 {
-    [FilePath("Packages/jp.sh0uroom.assetlinker/Editor/LinkerSettings.asset", FilePathAttribute.Location.PreferencesFolder)]
+    [FilePath("Packages/jp.sh0uroom.assetlinker/Editor/Settings.asset", FilePathAttribute.Location.PreferencesFolder)]
     public class LinkerSettings : ScriptableSingleton<LinkerSettings>
     {
         private SystemLanguage language;
