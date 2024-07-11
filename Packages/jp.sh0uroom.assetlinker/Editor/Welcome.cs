@@ -7,7 +7,7 @@ namespace sh0uRoom.AssetLinker
     [InitializeOnLoad]
     public class Welcome : EditorWindow
     {
-        static Welcome() => EditorApplication.delayCall += Check;
+        // static Welcome() => EditorApplication.delayCall += Check;
 
         private static void Check()
         {
@@ -54,7 +54,6 @@ namespace sh0uRoom.AssetLinker
                 if (System.Enum.TryParse(evt.newValue, out SystemLanguage language))
                 {
                     LinkerSettings.instance.Language = language;
-                    EditorUtility.SetDirty(LinkerSettings.instance);
                 }
             });
 
@@ -63,8 +62,9 @@ namespace sh0uRoom.AssetLinker
             dontshowToggle.RegisterValueChangedCallback(evt =>
             {
                 LinkerSettings.instance.IsAutoShow = !evt.newValue;
-                EditorUtility.SetDirty(LinkerSettings.instance);
             });
+
+            EditorUtility.SetDirty(LinkerSettings.instance);
         }
 
         [SerializeField] private VisualTreeAsset welcomeUxml;
