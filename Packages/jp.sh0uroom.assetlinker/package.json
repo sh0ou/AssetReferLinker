@@ -1,7 +1,7 @@
 {
   "name": "jp.sh0uroom.assetlinker",
   "displayName": "AssetReferLinker",
-  "version": "1.0.1",
+  "version": "1.0.3-preview",
   "description": "AssetLinker is a package for easily referencing information on external assets used in a project.",
   "gitDependencies": {},
   "author": {
@@ -11,6 +11,9 @@
   },
   "legacyFolders": {},
   "legacyFiles": {},
+  "documentationUrl": "https://github.com/sh0ou/AssetReferLinker/blob/main/README.md",
+  "licensesUrl": "https://github.com/sh0ou/AssetReferLinker/blob/main/LICENSE",
+  "changelogUrl": "https://github.com/sh0ou/AssetReferLinker/commits/",
   "type": "tool",
   "unity": "2022.3",
   "hideInEditor": false,
