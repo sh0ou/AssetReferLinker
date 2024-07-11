@@ -168,10 +168,12 @@ namespace sh0uRoom.AssetLinker
                 if (evt.newValue)
                 {
                     LinkerSettings.instance.IsAutoShowMissing = false;
+                    EditorUtility.SetDirty(LinkerSettings.instance);
                 }
                 else
                 {
                     LinkerSettings.instance.IsAutoShowMissing = true;
+                    EditorUtility.SetDirty(LinkerSettings.instance);
                 }
             });
         }

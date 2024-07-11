@@ -47,7 +47,9 @@ namespace sh0uRoom.AssetLinker
                 }
                 else
                 {
-                    return $"Missing: {LinkerSettings.instance.Language}";
+                    Debug.Log("Set English because of missing language");
+                    LinkerSettings.instance.Language = SystemLanguage.English;
+                    return dic[SystemLanguage.English];
                 }
             }
             return $"Missing: {id}";
