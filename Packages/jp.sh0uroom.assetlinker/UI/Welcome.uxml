@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:Template name="Credit" src="project://database/Packages/jp.sh0uroom.assetlinker/UI/Credit.uxml?fileID=9197481963319205126&amp;guid=f9c3a6af0821505428255dd14c12084b&amp;type=3#Credit" />
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:Instance template="Credit" name="Credit" />
+        <ui:Button text="Readme" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Readme" style="height: 30px;" />
+        <ui:Button text="Change Language" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Settings" style="height: 30px;" />
+    </ui:VisualElement>
+</ui:UXML>
