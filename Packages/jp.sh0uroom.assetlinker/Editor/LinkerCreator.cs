@@ -26,6 +26,7 @@ namespace sh0uRoom.AssetLinker
             var path = AssetDatabase.GetAssetPath(Selection.activeObject);
 
             var downloadURLField = rootView.Q<TextField>("DownloadURL");
+            downloadURLField.label = Localizer.Instance.Translate("DOWNLOAD_URL");
             if (string.IsNullOrEmpty(path))
             {
                 downloadURLField.style.display = DisplayStyle.None;
@@ -36,6 +37,7 @@ namespace sh0uRoom.AssetLinker
                 downloadURLField.style.display = DisplayStyle.Flex;
             }
             var filePathField = rootView.Q<TextField>("FilePath");
+            filePathField.label = Localizer.Instance.Translate("ASSET_PATH");
             filePathField.value = path;
 
             var detailView = rootView.Q<VisualElement>("DetailView");
@@ -63,6 +65,7 @@ namespace sh0uRoom.AssetLinker
 
             //アセット名
             var assetNameField = detailView.Q<TextField>("AssetName");
+            assetNameField.label = Localizer.Instance.Translate("ASSET_NAME");
             assetNameField.RegisterValueChangedCallback((evt) =>
             {
                 OnAssetNameChanged(detailView, assetNameField);
@@ -70,7 +73,9 @@ namespace sh0uRoom.AssetLinker
 
             //ライセンスURL
             var licenseURLField = detailView.Q<TextField>("LicenseURL");
+            licenseURLField.label = Localizer.Instance.Translate("LICENSE_URL");
             var licenseURLWarning = detailView.Q<HelpBox>("LicenseURLWarning");
+            licenseURLWarning.text = Localizer.Instance.Translate("LICENSE_WARNING");
             licenseURLField.RegisterValueChangedCallback((evt) =>
             {
                 if (string.IsNullOrEmpty(licenseURLField.value) || !licenseURLField.value.StartsWith("https://"))
@@ -84,9 +89,11 @@ namespace sh0uRoom.AssetLinker
             });
 
             var isFreeToggle = detailView.Q<Toggle>("IsFree");
+            isFreeToggle.label = Localizer.Instance.Translate("ISFREE");
 
             //ファイルパス
             var filePathsFoldout = detailView.Q<Foldout>("FilePaths");
+            filePathsFoldout.text = Localizer.Instance.Translate("FILEPATHS");
             var filePaths = AssetDatabase.FindAssets("", new string[] { path }); //GUIDなので後でパスに変換する
             var fileToggles = new Dictionary<string, bool>();
             for (int i = 0; i < filePaths.Length; i++)
@@ -113,10 +120,13 @@ namespace sh0uRoom.AssetLinker
                 container.Add(item);
             }
 
+            //警告文
+            var modifyWarning = detailView.Q<HelpBox>("ModifyWarning");
+            modifyWarning.text = $"<b><size=14>{Localizer.Instance.Translate("CREATE_WARNING_0")}</size></b>\n{Localizer.Instance.Translate("CREATE_WARNING_1")}";
+
             //リンク作成
             var createButton = rootView.Q<Button>("LinkButton");
 
-            // createButton.focusable
             createButton.RegisterCallback<ClickEvent>((evt) =>
             {
                 var linkerData = new LinkerData
@@ -132,12 +142,14 @@ namespace sh0uRoom.AssetLinker
                 if (ValidateFile(linkerData.Name))
                 {
                     // ポップアップ表示
-                    EditorUtility.DisplayDialog("LinkerCreator", "Link created!", "OK");
+                    var message = Localizer.Instance.Translate("CREATE_OK");
+                    EditorUtility.DisplayDialog("LinkerCreator", message, "OK");
                     Close();
                 }
                 else
                 {
-                    Debug.LogError("Failed to create link");
+                    var message = Localizer.Instance.Translate("CREATE_NG");
+                    EditorUtility.DisplayDialog("LinkerCreator", message, "OK");
                 }
             });
 
@@ -159,6 +171,7 @@ namespace sh0uRoom.AssetLinker
         {
             var back = assetNameField.Q<VisualElement>(UI_TEXTBG_NAME);
             var warningView = detailView.Q<HelpBox>("AssetNameWarning");
+            warningView.text = Localizer.Instance.Translate("ASSETNAME_WARNING");
             if (string.IsNullOrEmpty(assetNameField.value))
             {
                 ColorUtility.TryParseHtmlString("#320000", out Color color);
@@ -195,14 +208,6 @@ namespace sh0uRoom.AssetLinker
 
         private void CreateLink(LinkerData data)
         {
-            // Debug.Log($"license: {data.LicenseURL}");
-            // Debug.Log($"download: {data.DownloadURL}");
-            // Debug.Log($"vendor: {data.Vendor}");
-            // Debug.Log($"isFree: {data.IsFree}");
-            // foreach (var path in data.Paths)
-            // {
-            //     Debug.Log($"path: {path}");
-            // }
             try
             {
                 var path = $"{FOLDER_NAME}/{data.Name}.astlnk";
@@ -210,7 +215,7 @@ namespace sh0uRoom.AssetLinker
                 // JSON形式で出力
                 // var json = JsonUtility.ToJson(data);
                 var json = JsonConvert.SerializeObject(data, Formatting.Indented);
-                Debug.Log("Generated JSON: " + json);
+                // Debug.Log("Generated JSON: " + json);
 
                 // ファイルにJSONを書き込む
                 if (!System.IO.Directory.Exists(FOLDER_NAME))
@@ -251,7 +256,7 @@ namespace sh0uRoom.AssetLinker
             if (TryUpdateVendorLabel(downloadURLField.value, LinkerInfo.vketStoreURLs, labelField, Vendor.VKetStore))
                 return Vendor.VKetStore;
 
-            labelField.text = "Unknown URL";
+            labelField.text = Localizer.Instance.Translate("VENDOR_UNKNOWN");
             labelField.style.color = Color.yellow;
             return Vendor.Unknown;
         }
@@ -263,7 +268,9 @@ namespace sh0uRoom.AssetLinker
                 var pattern = Regex.Escape(targetUrl).Replace("\\*", ".*");
                 if (Regex.IsMatch(url, pattern))
                 {
-                    labelField.text = $"This is {vendor} URL";
+                    var info0 = Localizer.Instance.Translate("VENDOR_INFO_0");
+                    var info1 = Localizer.Instance.Translate("VENDOR_INFO_1");
+                    labelField.text = $"{info0} {vendor} {info1}";
                     labelField.style.color = Color.green;
                     return true;
                 }
