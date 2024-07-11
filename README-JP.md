@@ -7,6 +7,11 @@ AssetLinkerは、特定のアセットのダウンロード先や利用規約の
 
 有償のアセットや再配布できないアセットを使用するプロジェクトで共同作業を行う場合などに役立ちます。
 
+## 要件
+- ✅️Unity 2022.3 以降
+- ❓️Unity 2021.3
+- ❌️Unity 2021.1 以前
+
 # 言語設定
 ![image](https://github.com/sh0ou/AssetReferLinker/assets/47475540/abba2866-65a6-4ff0-8950-6f4126034a62)
 
