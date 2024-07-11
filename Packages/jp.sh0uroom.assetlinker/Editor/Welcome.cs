@@ -11,11 +11,9 @@ namespace sh0uRoom.AssetLinker
 
         private static void Check()
         {
-            var isAlreadyShown = SessionState.GetBool("sh0uRoom.AssetLinker.Welcome", false);
-            if (!isAlreadyShown)
+            if (LinkerSettings.instance.IsAutoShow)
             {
                 ShowWindow();
-                SessionState.SetBool("sh0uRoom.AssetLinker.Welcome", true);
             }
         }
 
@@ -47,6 +45,14 @@ namespace sh0uRoom.AssetLinker
 
             var settingsButton = rootUxml.Q<Button>("Settings");
             settingsButton.clicked += () => LinkerSettingsEditor.OpenSettings();
+
+            var dontshowToggle = rootUxml.Q<Toggle>("DontShow");
+            dontshowToggle.value = !LinkerSettings.instance.IsAutoShow;
+            dontshowToggle.RegisterValueChangedCallback(evt =>
+            {
+                LinkerSettings.instance.IsAutoShow = !evt.newValue;
+                EditorUtility.SetDirty(LinkerSettings.instance);
+            });
         }
 
         [SerializeField] private VisualTreeAsset welcomeUxml;

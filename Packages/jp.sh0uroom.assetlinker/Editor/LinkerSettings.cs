@@ -25,11 +25,11 @@ namespace sh0uRoom.AssetLinker
             }
         }
 
-        private bool isAutoShowMissing;
-        public bool IsAutoShowMissing
+        private bool isAutoShow;
+        public bool IsAutoShow
         {
-            get => isAutoShowMissing;
-            set => isAutoShowMissing = value;
+            get => isAutoShow;
+            set => isAutoShow = value;
 
         }
 
@@ -39,9 +39,9 @@ namespace sh0uRoom.AssetLinker
             {
                 language = SystemLanguage.English;
             }
-            if (isAutoShowMissing == default)
+            if (isAutoShow == default)
             {
-                isAutoShowMissing = true;
+                isAutoShow = true;
             }
         }
 

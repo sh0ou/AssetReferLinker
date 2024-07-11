@@ -34,7 +34,7 @@ namespace sh0uRoom.AssetLinker
             var languageIndex = EditorGUILayout.Popup("Language", System.Array.IndexOf(enableLanguages, settings.Language), LinkerSettings.GetLanguageStrings());
             settings.Language = enableLanguages[languageIndex];
 
-            settings.IsAutoShowMissing = EditorGUILayout.Toggle("Auto Show Missing", settings.IsAutoShowMissing);
+            settings.IsAutoShow = EditorGUILayout.Toggle("Auto Show Window", settings.IsAutoShow);
             if (EditorGUI.EndChangeCheck())
             {
                 EditorUtility.SetDirty(settings);
