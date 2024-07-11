@@ -3,6 +3,8 @@
 - [日本語](https://github.com/sh0ou/AssetReferLinker/blob/main/README-JP.md)
 - [English](https://github.com/sh0ou/AssetReferLinker/blob/main/README.md)
 
+[![openupm](https://img.shields.io/npm/v/jp.sh0uroom.assetlinker?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/jp.sh0uroom.assetlinker/)
+
 AssetLinkerは、特定のアセットのダウンロード先や利用規約のURL、ファイルパスなどの依存関係をJSONファイルとして保存し、ワンクリックで簡単に参照できるようにするツールです。
 
 有償のアセットや再配布できないアセットを使用するプロジェクトで共同作業を行う場合などに役立ちます。
