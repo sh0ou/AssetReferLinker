@@ -48,8 +48,8 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.modules.uielements": "",
-        "com.unity.nuget.newtonsoft-json": ""
+        "com.unity.modules.uielements": "*",
+        "com.unity.nuget.newtonsoft-json": "*"
       }
     },
     "com.unity.modules.imgui": {
