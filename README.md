@@ -42,9 +42,9 @@ That's all!
 That's all!
 
 # Change Languages
-![image](https://github.com/sh0ou/AssetReferLinker/assets/47475540/abba2866-65a6-4ff0-8950-6f4126034a62)
+![image](https://github.com/sh0ou/AssetReferLinker/assets/47475540/3db81b78-ca6a-47f5-af99-9b6f4835f4bf)
 
-Change to Window>AssetLinker>Settings or open from "Change Language" in the Welcome window.<br/>
+Can be Changed from language dropdown in the Window>AssetLinker>Welcome .<br/>
 At this time, English and Japanese are supported.
 
 # How to use
