@@ -1,8 +1,9 @@
 ﻿ID,English,Japanese
-ASSET_PATH,Asset File Path,アセットの場所
+ASSET_PATH,Asset File Path,アセットフォルダ
+FILE_NAME,File Name,ファイル名
+FILE_NAME_WARNING,The selected asset folder name becomes the file name.\nMake sure you have the correct folder.,選択したアセットフォルダ名がファイル名になります。\n 正しいフォルダを選択してください。
 DOWNLOAD_URL,Download URL,ダウンロードURL
-VENDOR_INFO_0,This is,これは
-VENDOR_INFO_1,URL,のURLです
+VENDOR_INFO,URL,のURLです
 VENDOR_UNKNOWN,Unknown,不明なURL
 ASSET_NAME,Asset Name,アセット名
 ASSETNAME_WARNING,Recommend Alphanumeric and Single-byte space.,ファイル名は半角英数字と半角スペースを使用することを推奨します。

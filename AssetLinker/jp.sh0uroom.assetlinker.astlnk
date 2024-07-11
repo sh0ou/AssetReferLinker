@@ -1,0 +1,29 @@
+{
+  "Name": "AssetLinker",
+  "FileName": "jp.sh0uroom.assetlinker",
+  "DownloadURL": "https://github.com/sh0ou/AssetReferLinker",
+  "LicenseURL": "https://github.com/sh0ou/AssetReferLinker?tab=MIT-1-ov-file",
+  "Vendor": 4,
+  "IsFree": true,
+  "Paths": [
+    "Packages/jp.sh0uroom.assetlinker/Editor",
+    "Packages/jp.sh0uroom.assetlinker/Editor/LinkerCreator.cs",
+    "Packages/jp.sh0uroom.assetlinker/Editor/LinkerInfo.cs",
+    "Packages/jp.sh0uroom.assetlinker/Editor/LinkerSettings.cs",
+    "Packages/jp.sh0uroom.assetlinker/Editor/LinkerSettingsEditor.cs",
+    "Packages/jp.sh0uroom.assetlinker/Editor/LinkerViewer.cs",
+    "Packages/jp.sh0uroom.assetlinker/Editor/Localize.csv",
+    "Packages/jp.sh0uroom.assetlinker/Editor/Localizer.cs",
+    "Packages/jp.sh0uroom.assetlinker/Editor/Settings.asset",
+    "Packages/jp.sh0uroom.assetlinker/Editor/sh0uRoom.AssetLinker.asmdef",
+    "Packages/jp.sh0uroom.assetlinker/Editor/Singleton.cs",
+    "Packages/jp.sh0uroom.assetlinker/package.json",
+    "Packages/jp.sh0uroom.assetlinker/UI",
+    "Packages/jp.sh0uroom.assetlinker/UI/CreateLinker.uxml",
+    "Packages/jp.sh0uroom.assetlinker/UI/CreateLinkerItem.uxml",
+    "Packages/jp.sh0uroom.assetlinker/UI/Credit.uxml",
+    "Packages/jp.sh0uroom.assetlinker/UI/ImportAsset.uxml",
+    "Packages/jp.sh0uroom.assetlinker/UI/ImportAssetItem.uxml",
+    "Packages/jp.sh0uroom.assetlinker/UI/logo.png"
+  ]
+}

@@ -39,6 +39,7 @@ namespace sh0uRoom.AssetLinker
     public class LinkerData
     {
         public string Name { get; set; }
+        public string FileName { get; set; }
         public string DownloadURL { get; set; }
         public string LicenseURL { get; set; }
         public Vendor Vendor { get; set; }
