@@ -9,15 +9,43 @@ AssetLinkerは、特定のアセットのダウンロード先や利用規約の
 
 有償のアセットや再配布できないアセットを使用するプロジェクトで共同作業を行う場合などに役立ちます。
 
+# インストール
+
 ## 要件
 - ✅️Unity 2022.3 以降
 - ❌️Unity 2021.3以前
 
-# 言語設定
-![image](https://github.com/sh0ou/AssetReferLinker/assets/47475540/abba2866-65a6-4ff0-8950-6f4126034a62)
+## Package Managerでインストール（推奨）
+この方法でインストールすると、Package Managerを通してワンクリックでパッケージの更新が行えるようになります。
 
-上メニューのWindow>AssetLinker>Settings から変更可能です。現時点では日本語、英語に対応しています。<br/>
-また、起動時に表示されるWelcomeウインドウの「Change Language」からも開くことができます。
+- Unityで Edit/Project Settings/Package Manager を開きます
+- 新しい Scoped Registryを追加します (あるいは既存の OpenUPM エントリを編集します)。
+  - Name: `package.openupm.com`
+  - URL: `https://package.openupm.com`
+  - Scope(s): `jp.sh0uroom.assetlinker`
+- Saveをクリックします
+
+- Window/Package Manager を開きます
+- Packagesを"My Registries" に切り替えます
+  - ![image](https://github.com/sh0ou/AssetReferLinker/assets/47475540/d99d40c3-b212-4457-8386-57902b0198dd)
+- AssetLinkerが表示されるので、右上の"Install"をクリックします
+
+これでインストールは完了です。
+
+## 手動でインストール
+- 下記のURLから最新のバージョンを選択します
+  - https://github.com/sh0ou/AssetReferLinker/tags
+- 解凍後、`AssetReferLinker/Packages`フォルダを開きます
+- `jp.sh0uroom.assetlinker`フォルダを探し、コピーします
+- インストール先の`プロジェクト名/Packages`フォルダを開き、先程の`jp.sh0uroom.assetlinker`をペーストします
+
+これでインストールは完了です。
+
+# 言語設定
+![image](https://github.com/sh0ou/AssetReferLinker/assets/47475540/3db81b78-ca6a-47f5-af99-9b6f4835f4bf)
+
+上メニューのWindow>AssetLinker>Welcome から表示できるWelcomeウインドウから変更可能です。<br/>
+現時点では日本語、英語に対応しています。
 
 # 使い方
 ## リンクの作成
@@ -73,7 +101,7 @@ UnityのProjectビューから、関連付けを行いたいアセットのル�
 
 > [!NOTE]
 > ウインドウの自動表示はプロジェクト起動時に行われます。
-> これは確認ウインドウの右下、もしくは設定画面から、次回から自動的に表示しないよう設定することもできます。
+> これは確認ウインドウの右下から、次回から自動的に表示しないよう設定することもできます。
 
 各アセットメニューには以下のボタンが存在します。<br/>
 どのウインドウも、確認ウインドウでYesを選択した場合のみ実行されます。
