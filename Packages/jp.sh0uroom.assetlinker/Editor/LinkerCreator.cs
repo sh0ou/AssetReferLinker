@@ -89,10 +89,6 @@ namespace sh0uRoom.AssetLinker
             //アセット名
             var assetNameField = detailView.Q<TextField>("AssetName");
             assetNameField.label = Localizer.Instance.Translate("ASSET_NAME");
-            assetNameField.RegisterValueChangedCallback((evt) =>
-            {
-                OnAssetNameChanged(detailView, assetNameField);
-            });
 
             //ライセンスURL
             var licenseURLField = detailView.Q<TextField>("LicenseURL");
@@ -188,33 +184,6 @@ namespace sh0uRoom.AssetLinker
             {
                 linkInfo.text = "Not Linked";
                 linkInfo.style.color = Color.yellow;
-            }
-        }
-
-        private void OnAssetNameChanged(VisualElement detailView, TextField assetNameField)
-        {
-            var back = assetNameField.Q<VisualElement>(UI_TEXTBG_NAME);
-            var warningView = detailView.Q<HelpBox>("AssetNameWarning");
-            warningView.text = Localizer.Instance.Translate("ASSETNAME_WARNING");
-            if (string.IsNullOrEmpty(assetNameField.value))
-            {
-                ColorUtility.TryParseHtmlString("#320000", out Color color);
-                back.style.backgroundColor = color;
-                warningView.style.display = DisplayStyle.None;
-                return;
-            }
-            else
-            {
-                ColorUtility.TryParseHtmlString("#2A2A2A", out Color color);
-                back.style.backgroundColor = color;
-            }
-            if (!ValidateAssetName(assetNameField.value))
-            {
-                warningView.style.display = DisplayStyle.Flex;
-            }
-            else
-            {
-                warningView.style.display = DisplayStyle.None;
             }
         }
 
