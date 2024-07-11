@@ -3,14 +3,15 @@
 - [日本語](https://github.com/sh0ou/AssetReferLinker/blob/main/README-JP.md)
 - [English](https://github.com/sh0ou/AssetReferLinker/blob/main/README.md)
 
+[![openupm](https://img.shields.io/npm/v/jp.sh0uroom.assetlinker?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/jp.sh0uroom.assetlinker/)
+
 AssetLinker is a tool for storing dependencies such as download URLs, license URLs, and file paths as JSON files for easy reference.
 
 This is useful when collaborating on projects that use paid assets or assets that cannot be redistributed.
 
 ## Requirements Info
 - ✅️Unity 2022.3 -
-- ❓️Unity 2021.3
-- ❌️Unity 2021.1 and below
+- ❌️Unity 2021.3 and below
 
 # Change Languages
 ![image](https://github.com/sh0ou/AssetReferLinker/assets/47475540/abba2866-65a6-4ff0-8950-6f4126034a62)
