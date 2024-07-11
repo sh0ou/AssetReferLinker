@@ -1,5 +1,8 @@
 ![logo](https://raw.githubusercontent.com/sh0ou/AssetReferLinker/main/Packages/jp.sh0uroom.assetlinker/UI/logo.png)
 # AssetLinker
+- [日本語](https://github.com/sh0ou/AssetReferLinker/blob/main/README-JP.md)
+- [English](https://github.com/sh0ou/AssetReferLinker/blob/main/README.md)
+
 AssetLinkerは、特定のアセットのダウンロード先や利用規約のURL、ファイルパスなどの依存関係をJSONファイルとして保存し、ワンクリックで簡単に参照できるようにするツールです。
 
 有償のアセットや再配布できないアセットを使用するプロジェクトで共同作業を行う場合などに役立ちます。
@@ -80,6 +83,8 @@ UnityのProjectビューから、関連付けを行いたいアセットのル�
 Githubのissue機能で受け付けています。<br/>
 下記URLから投稿をお願いします。
 
-<ここにURL>
+[不具合報告](https://github.com/sh0ou/AssetReferLinker/issues/new?assignees=&labels=T%3A+Bug&projects=&template=-jp--%E4%B8%8D%E5%85%B7%E5%90%88%E5%A0%B1%E5%91%8A.md&title=)
+
+[要望](https://github.com/sh0ou/AssetReferLinker/issues/new?assignees=&labels=P3%3A+Medium%2C+T%3A+Enhancement&projects=&template=-jp--%E8%A6%81%E6%9C%9B-%E6%8F%90%E6%A1%88.md&title=)
 
 また、Pull Requestも歓迎しています。
