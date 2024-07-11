@@ -9,9 +9,37 @@ AssetLinker is a tool for storing dependencies such as download URLs, license UR
 
 This is useful when collaborating on projects that use paid assets or assets that cannot be redistributed.
 
+# Setup
+
 ## Requirements Info
 - ✅️Unity 2022.3 -
 - ❌️Unity 2021.3 and below
+
+## Package Manager (Recommended)
+When installed this way, package updates can be performed with a single click through the Package Manager.
+
+- open `Edit/Project Settings/Package Manager`
+- add a new Scoped Registry (or edit the existing OpenUPM entry)
+  - Name: `package.openupm.com`
+  - URL: `https://package.openupm.com`
+  - Scope(s): `jp.sh0uroom.assetlinker`
+- click Save or Apply
+
+- open `Window/Package Manager`
+- change Packages Category to `My Registries`
+  - ![image](https://github.com/sh0ou/AssetReferLinker/assets/47475540/d99d40c3-b212-4457-8386-57902b0198dd)
+- click `install`
+
+That's all!
+
+## Manually Install
+- Select the latest version from the following URL
+  - https://github.com/sh0ou/AssetReferLinker/tags
+- After extracting, open `AssetReferLinker/Packages`
+- find `jp.sh0uroom.assetlinker`, and copy that.
+- open to `Install Project Name/Packages`, and paste `jp.sh0uroom.assetlinker`.
+
+That's all!
 
 # Change Languages
 ![image](https://github.com/sh0ou/AssetReferLinker/assets/47475540/abba2866-65a6-4ff0-8950-6f4126034a62)
