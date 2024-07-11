@@ -167,11 +167,11 @@ namespace sh0uRoom.AssetLinker
             {
                 if (evt.newValue)
                 {
-                    LinkerSettings.Instance.IsAutoShowMissing = false;
+                    LinkerSettings.instance.IsAutoShowMissing = false;
                 }
                 else
                 {
-                    LinkerSettings.Instance.IsAutoShowMissing = true;
+                    LinkerSettings.instance.IsAutoShowMissing = true;
                 }
             });
         }

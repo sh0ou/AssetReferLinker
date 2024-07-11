@@ -1,8 +1,10 @@
+using UnityEditor;
 using UnityEngine;
 
 namespace sh0uRoom.AssetLinker
 {
-    public class LinkerSettings : SingletonScriptableObject<LinkerSettings>
+    [FilePath("Packages/jp.sh0uroom.assetlinker/Editor/LinkerSettings.asset", FilePathAttribute.Location.PreferencesFolder)]
+    public class LinkerSettings : ScriptableSingleton<LinkerSettings>
     {
         private SystemLanguage language;
 

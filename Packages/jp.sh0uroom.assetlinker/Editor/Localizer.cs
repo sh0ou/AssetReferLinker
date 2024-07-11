@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 namespace sh0uRoom.AssetLinker
@@ -8,7 +7,7 @@ namespace sh0uRoom.AssetLinker
     {
         public void LoadLocalization()
         {
-            Debug.Log("LoadLocalization");
+            // Debug.Log("LoadLocalization");
             localizationDic = new Dictionary<string, Dictionary<SystemLanguage, string>>();
 
             var lines = csv.text.Split('\n');
@@ -39,15 +38,16 @@ namespace sh0uRoom.AssetLinker
 
         public string Translate(string id)
         {
+            LoadLocalization();
             if (localizationDic.TryGetValue(id, out var dic))
             {
-                if (dic.TryGetValue(LinkerSettings.Instance.Language, out var text))
+                if (dic.TryGetValue(LinkerSettings.instance.Language, out var text))
                 {
                     return text;
                 }
                 else
                 {
-                    return $"Missing: {LinkerSettings.Instance.Language}";
+                    return $"Missing: {LinkerSettings.instance.Language}";
                 }
             }
             return $"Missing: {id}";
