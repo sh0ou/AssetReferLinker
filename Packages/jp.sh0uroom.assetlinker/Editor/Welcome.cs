@@ -43,8 +43,20 @@ namespace sh0uRoom.AssetLinker
             var readmeButton = rootUxml.Q<Button>("Readme");
             readmeButton.clicked += () => Application.OpenURL("https://github.com/sh0ou/AssetReferLinker/blob/main/README.md");
 
-            var settingsButton = rootUxml.Q<Button>("Settings");
-            settingsButton.clicked += () => LinkerSettingsEditor.OpenSettings();
+            var languageDropdown = rootUxml.Q<DropdownField>("Language");
+            foreach (var language in LinkerSettings.GetLanguages())
+            {
+                languageDropdown.choices.Add(language.ToString());
+            }
+            languageDropdown.value = LinkerSettings.instance.Language.ToString();
+            languageDropdown.RegisterValueChangedCallback(evt =>
+            {
+                if (System.Enum.TryParse(evt.newValue, out SystemLanguage language))
+                {
+                    LinkerSettings.instance.Language = language;
+                    EditorUtility.SetDirty(LinkerSettings.instance);
+                }
+            });
 
             var dontshowToggle = rootUxml.Q<Toggle>("DontShow");
             dontshowToggle.value = !LinkerSettings.instance.IsAutoShow;
