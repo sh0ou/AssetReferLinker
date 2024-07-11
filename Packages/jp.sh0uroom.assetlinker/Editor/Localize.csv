@@ -3,7 +3,9 @@ ASSET_PATH,Asset File Path,アセットの場所
 DOWNLOAD_URL,Download URL,ダウンロードURL
 VENDOR_INFO_0,This is,これは
 VENDOR_INFO_1,URL,のURLです
+VENDOR_UNKNOWN,Unknown,不明なURL
 ASSET_NAME,Asset Name,アセット名
+ASSETNAME_WARNING,Recommend Alphanumeric and Single-byte space.,ファイル名は半角英数字と半角スペースを使用することを推奨します。
 LICENSE_URL,LicenseURL,ライセンスURL
 LICENSE_WARNING,License URL is not entered. For licensed assets，enter is recommended.,ライセンスURLが入力されていません。ライセンスが付与されてたり、利用規約が存在する場合、入力をおすすめします。
 ISFREE,FREE?,無料?
@@ -17,6 +19,6 @@ DONTSHOWAGAIN,Don't show again,次回から表示しない
 FREE,Free,無料
 PAID,Paid,有料
 CREATE_OK,Link created!,リンクが作成されました！
-CREATE_NG,Failed to create link,リンクの作成に失敗しました
+CREATE_NG,Failed to create link.\nThe file name contain characters that cannot be used?,リンクの作成に失敗しました\nファイル名に使用できない文字が含まれている可能性があります
 OPENURL_MESSAGE,Open this URL?,URLを開きますか?
 UNLINK_MESSAGE,Are you sure to unlink?,このアセットのリンクを解除しますか？
