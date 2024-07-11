@@ -25,6 +25,28 @@ namespace sh0uRoom.AssetLinker
             var rootView = asset.Q<VisualElement>("View");
             var path = AssetDatabase.GetAssetPath(Selection.activeObject);
 
+            var fileNameField = rootView.Q<TextField>("FileName");
+            fileNameField.label = Localizer.Instance.Translate("FILE_NAME");
+            fileNameField.Q<VisualElement>("unity-text-input").style.opacity = 0.5f;
+            var fileName = "";
+            if (string.IsNullOrEmpty(path))
+            {
+                //フォルダ名の最下層（現在選択中のフォルダ）を取得
+                //スラッシュで区切られた文字列を配列にして、最後の要素を取得
+                var pathArray = EditorUtility.OpenFolderPanel("Select Folder", "", "").Split('/');
+                fileName = pathArray[pathArray.Length - 1];
+            }
+            else
+            {
+                //ファイル名を取得
+                var pathArray = path.Split('/');
+                fileName = pathArray[pathArray.Length - 1];
+            }
+            fileNameField.value = fileName;
+
+            var fileNameHelpbox = rootView.Q<HelpBox>("FileNameWarning");
+            fileNameHelpbox.text = Localizer.Instance.Translate("FILE_NAME_WARNING");
+
             var downloadURLField = rootView.Q<TextField>("DownloadURL");
             downloadURLField.label = Localizer.Instance.Translate("DOWNLOAD_URL");
             if (string.IsNullOrEmpty(path))
@@ -38,6 +60,7 @@ namespace sh0uRoom.AssetLinker
             }
             var filePathField = rootView.Q<TextField>("FilePath");
             filePathField.label = Localizer.Instance.Translate("ASSET_PATH");
+            filePathField.Q<VisualElement>("unity-text-input").style.opacity = 0.5f;
             filePathField.value = path;
 
             var detailView = rootView.Q<VisualElement>("DetailView");
@@ -132,6 +155,7 @@ namespace sh0uRoom.AssetLinker
                 var linkerData = new LinkerData
                 {
                     Name = assetNameField.value,
+                    FileName = fileNameField.value,
                     DownloadURL = downloadURLField.value,
                     LicenseURL = licenseURLField.value,
                     Vendor = vendor,
@@ -139,7 +163,7 @@ namespace sh0uRoom.AssetLinker
                     Paths = fileToggles.Where(x => x.Value).Select(x => x.Key).ToArray()
                 };
                 CreateLink(linkerData);
-                if (ValidateFile(linkerData.Name))
+                if (ValidateFile(linkerData.FileName))
                 {
                     // ポップアップ表示
                     var message = Localizer.Instance.Translate("CREATE_OK");
@@ -155,7 +179,7 @@ namespace sh0uRoom.AssetLinker
 
             //リンク情報
             var linkInfo = rootView.Q<Label>("LinkInfo");
-            if (ValidateFile(assetNameField.value))
+            if (ValidateFile(fileNameField.value))
             {
                 linkInfo.text = "Linked!";
                 linkInfo.style.color = Color.green;
@@ -184,7 +208,6 @@ namespace sh0uRoom.AssetLinker
                 ColorUtility.TryParseHtmlString("#2A2A2A", out Color color);
                 back.style.backgroundColor = color;
             }
-
             if (!ValidateAssetName(assetNameField.value))
             {
                 warningView.style.display = DisplayStyle.Flex;
@@ -210,7 +233,7 @@ namespace sh0uRoom.AssetLinker
         {
             try
             {
-                var path = $"{FOLDER_NAME}/{data.Name}.astlnk";
+                var path = $"{FOLDER_NAME}/{data.FileName}.astlnk";
 
                 // JSON形式で出力
                 // var json = JsonUtility.ToJson(data);
@@ -268,9 +291,8 @@ namespace sh0uRoom.AssetLinker
                 var pattern = Regex.Escape(targetUrl).Replace("\\*", ".*");
                 if (Regex.IsMatch(url, pattern))
                 {
-                    var info0 = Localizer.Instance.Translate("VENDOR_INFO_0");
-                    var info1 = Localizer.Instance.Translate("VENDOR_INFO_1");
-                    labelField.text = $"{info0} {vendor} {info1}";
+                    var message = Localizer.Instance.Translate("VENDOR_INFO");
+                    labelField.text = vendor.ToString() + message;
                     labelField.style.color = Color.green;
                     return true;
                 }

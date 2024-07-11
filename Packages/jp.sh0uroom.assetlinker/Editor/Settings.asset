@@ -12,4 +12,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8135dca2627997c438aa09dec43bbb0e, type: 3}
   m_Name: Settings
   m_EditorClassIdentifier: 
-  IsAutoShowMissing: 1

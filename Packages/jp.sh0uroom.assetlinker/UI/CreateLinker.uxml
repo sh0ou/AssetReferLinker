@@ -2,10 +2,12 @@
     <ui:Template name="Credit" src="project://database/Packages/jp.sh0uroom.assetlinker/UI/Credit.uxml?fileID=9197481963319205126&amp;guid=f9c3a6af0821505428255dd14c12084b&amp;type=3#Credit" />
     <ui:VisualElement name="View" style="flex-grow: 1;">
         <ui:Instance template="Credit" name="Credit" />
-        <ui:TextField label="Asset File Path" value="NOT SELECTED" readonly="true" picking-mode="Ignore" name="FilePath" style="opacity: 0.5;" />
+        <ui:TextField label="Asset File Path" value="NOT SELECTED" readonly="true" picking-mode="Ignore" name="FilePath" style="opacity: 1;" />
+        <ui:TextField picking-mode="Ignore" label="File Name" value="NOT SELECTED" name="FileName" readonly="true" style="opacity: 1;" />
+        <ui:HelpBox text="The selected asset folder name becomes the file name.\nMake sure you have the correct folder." message-type="Info" name="FileNameWarning" style="min-height: 40px; height: 40px; max-height: 40px;" />
         <ui:TextField picking-mode="Ignore" label="Download URL" keyboard-type="URL" name="DownloadURL" focusable="true" style="display: none; visibility: visible; overflow: hidden; opacity: 1;" />
         <ui:VisualElement name="DetailView" style="flex-grow: 1; display: none;">
-            <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="VendorInfo" style="padding-top: 8px; padding-left: 4px; padding-right: 4px; margin-top: 0; margin-bottom: 0; margin-right: 0; margin-left: 0; padding-bottom: 8px; color: rgb(255, 255, 255); -unity-text-align: upper-center; display: flex;" />
+            <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="VendorInfo" style="padding-top: 8px; padding-left: 0; padding-right: 0; margin-top: 0; margin-bottom: 0; margin-right: 0; margin-left: 0; padding-bottom: 8px; color: rgb(255, 255, 255); -unity-text-align: upper-center; display: flex; text-overflow: ellipsis;" />
             <ui:TextField picking-mode="Ignore" label="Asset Name" name="AssetName" />
             <ui:HelpBox text="Recommend Alphanumeric and Single-byte space." message-type="Info" name="AssetNameWarning" focusable="false" style="display: none; height: 40px; min-height: 40px; max-height: 40px;" />
             <ui:TextField picking-mode="Ignore" label="License URL" name="LicenseURL" keyboard-type="URL" style="display: flex;" />

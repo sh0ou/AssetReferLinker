@@ -11,7 +11,7 @@ namespace sh0uRoom.AssetLinker
         {
             var file = AssetDatabase.FindAssets("t:LinkerSettings")[0];
             var settings = AssetDatabase.LoadAssetAtPath<LinkerSettings>(AssetDatabase.GUIDToAssetPath(file));
-            if(settings)
+            if (settings)
             {
                 Selection.activeObject = settings;
             }
@@ -30,7 +30,10 @@ namespace sh0uRoom.AssetLinker
             }
 
             EditorGUI.BeginChangeCheck();
-            settings.Language = (SystemLanguage)EditorGUILayout.EnumPopup("Language", settings.Language);
+            var enableLanguages = LinkerSettings.GetLanguages();
+            var languageIndex = EditorGUILayout.Popup("Language", System.Array.IndexOf(enableLanguages, settings.Language), LinkerSettings.GetLanguageStrings());
+            settings.Language = enableLanguages[languageIndex];
+
             settings.IsAutoShowMissing = EditorGUILayout.Toggle("Auto Show Missing", settings.IsAutoShowMissing);
             if (EditorGUI.EndChangeCheck())
             {
