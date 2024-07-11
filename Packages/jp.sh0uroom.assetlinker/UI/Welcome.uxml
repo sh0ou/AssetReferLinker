@@ -5,4 +5,5 @@
         <ui:Button text="Readme" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Readme" style="height: 30px;" />
         <ui:Button text="Change Language" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Settings" style="height: 30px;" />
     </ui:VisualElement>
+    <ui:Toggle label="Don&apos;t show again" value="false" name="DontShow" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 5px; padding-bottom: 5px; align-self: flex-end;" />
 </ui:UXML>
