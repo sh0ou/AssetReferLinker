@@ -16,7 +16,6 @@
   "changelogUrl": "https://github.com/sh0ou/AssetReferLinker/commits/",
   "type": "tool",
   "unity": "2022.3",
-  "hideInEditor": false,
   "dependencies": {
     "com.unity.modules.uielements": "1.0.0",
     "com.unity.nuget.newtonsoft-json": "1.0.0"
