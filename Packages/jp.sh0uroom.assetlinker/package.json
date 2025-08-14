@@ -1,7 +1,7 @@
 {
   "name": "jp.sh0uroom.assetlinker",
   "displayName": "AssetReferLinker",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "AssetLinker is a package for easily referencing information on external assets used in a project.",
   "gitDependencies": {},
   "author": {
