@@ -11,7 +11,7 @@ namespace sh0uRoom.AssetLinker
 
         private static void Check()
         {
-            if (LinkerSettings.instance.IsAutoShow)
+            if (LinkerSettings.IsAutoShow)
             {
                 ShowWindow();
             }
@@ -48,23 +48,21 @@ namespace sh0uRoom.AssetLinker
             {
                 languageDropdown.choices.Add(language.ToString());
             }
-            languageDropdown.value = LinkerSettings.instance.Language.ToString();
+            languageDropdown.value = LinkerSettings.Language.ToString();
             languageDropdown.RegisterValueChangedCallback(evt =>
             {
                 if (System.Enum.TryParse(evt.newValue, out SystemLanguage language))
                 {
-                    LinkerSettings.instance.Language = language;
+                    LinkerSettings.Language = language;
                 }
             });
 
             var dontshowToggle = rootUxml.Q<Toggle>("DontShow");
-            dontshowToggle.value = !LinkerSettings.instance.IsAutoShow;
+            dontshowToggle.value = !LinkerSettings.IsAutoShow;
             dontshowToggle.RegisterValueChangedCallback(evt =>
             {
-                LinkerSettings.instance.IsAutoShow = !evt.newValue;
+                LinkerSettings.IsAutoShow = !evt.newValue;
             });
-
-            EditorUtility.SetDirty(LinkerSettings.instance);
         }
 
         [SerializeField] private VisualTreeAsset welcomeUxml;

@@ -41,14 +41,14 @@ namespace sh0uRoom.AssetLinker
             LoadLocalization();
             if (localizationDic.TryGetValue(id, out var dic))
             {
-                if (dic.TryGetValue(LinkerSettings.instance.Language, out var text))
+                if (dic.TryGetValue(LinkerSettings.Language, out var text))
                 {
                     return text;
                 }
                 else
                 {
                     Debug.Log("Set English because of missing language");
-                    LinkerSettings.instance.Language = SystemLanguage.English;
+                    LinkerSettings.Language = SystemLanguage.English;
                     return dic[SystemLanguage.English];
                 }
             }

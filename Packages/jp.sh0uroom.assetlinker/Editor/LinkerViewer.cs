@@ -163,11 +163,10 @@ namespace sh0uRoom.AssetLinker
 
             var dontShowField = rootUxml.Q<Toggle>("DontShow");
             dontShowField.label = Localizer.Instance.Translate("DONTSHOWAGAIN");
-            dontShowField.value = !LinkerSettings.instance.IsAutoShow;
+            dontShowField.value = !LinkerSettings.IsAutoShow;
             dontShowField.RegisterValueChangedCallback((evt) =>
             {
-                LinkerSettings.instance.IsAutoShow = !evt.newValue;
-                EditorUtility.SetDirty(LinkerSettings.instance);
+                LinkerSettings.IsAutoShow = !evt.newValue;
             });
         }
 
