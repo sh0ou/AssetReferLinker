@@ -6,9 +6,8 @@ namespace sh0uRoom.AssetLinker
 {
     public sealed class LinkerSettings
     {
-        private const string KeyPrefix = "jp.sh0uroom.assetlinker.";
-        private const string KeyLanguage = KeyPrefix + "language";
-        private const string KeyAutoShow = KeyPrefix + "autoShow";
+        private const string KeyLanguage = LinkerConstants.KeyPrefix + "language";
+        private const string KeyAutoShow = LinkerConstants.KeyPrefix + "autoShow";
 
         // 対応言語
         private static readonly SystemLanguage[] supportLanguages = new SystemLanguage[]
@@ -52,9 +51,9 @@ namespace sh0uRoom.AssetLinker
         [SettingsProvider]
         private static SettingsProvider CreateSettingsProvider()
         {
-            return new SettingsProvider("Preferences/Asset Linker", SettingsScope.User)
+            return new SettingsProvider("Preferences/AssetLinker", SettingsScope.User)
             {
-                label = "Asset Refer Linker",
+                label = "AssetLinker",
                 guiHandler = _ =>
                 {
                     // 言語は対応言語のみの Popup を表示
@@ -77,5 +76,12 @@ namespace sh0uRoom.AssetLinker
                 keywords = new HashSet<string>(new[] { "asset", "linker", "language", "auto", "show" })
             };
         }
+    }
+    internal static class LinkerConstants
+    {
+        public const string PackageId = "jp.sh0uroom.assetlinker";
+        public const string KeyPrefix = PackageId + ".";
+        public const string FolderName = "AssetLinker";
+        public const string AlreadyShownSessionKey = PackageId + ".welcome_window_shown";
     }
 }
