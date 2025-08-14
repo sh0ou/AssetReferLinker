@@ -6,22 +6,19 @@ namespace sh0uRoom.AssetLinker
     [FilePath("Packages/jp.sh0uroom.assetlinker/Editor/Settings.asset", FilePathAttribute.Location.PreferencesFolder)]
     public class LinkerSettings : ScriptableSingleton<LinkerSettings>
     {
-        private SystemLanguage language;
+        [SerializeField]
+        private SystemLanguage language = SystemLanguage.English;
 
         public SystemLanguage Language
         {
             get => language;
             set
             {
-                if (System.Array.IndexOf(GetLanguages(), value) == -1)
-                {
-                    Debug.LogWarning("Language is not supported. Set to English.");
-                    language = SystemLanguage.English;
-                }
-                else
-                {
-                    language = value;
-                }
+                var supported = GetLanguages();
+                var newValue = System.Array.IndexOf(supported, value) == -1 ? SystemLanguage.English : value;
+                if (language == newValue) return;
+                language = newValue;
+                Save(true); // 変更時に保存
             }
         }
 
@@ -29,19 +26,11 @@ namespace sh0uRoom.AssetLinker
         public bool IsAutoShow
         {
             get => isAutoShow;
-            set => isAutoShow = value;
-
-        }
-
-        public void OnEnable()
-        {
-            if (language == default)
+            set
             {
-                language = SystemLanguage.English;
-            }
-            if (isAutoShow == default)
-            {
-                isAutoShow = true;
+                if (isAutoShow == value) return;
+                isAutoShow = value;
+                Save(true); // 変更時に保存
             }
         }
 
