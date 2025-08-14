@@ -95,6 +95,15 @@ namespace sh0uRoom.AssetLinker
         }
 
         /// <summary>
+        /// 外部からリンク変更を通知する
+        /// </summary>
+        public static void NotifyLinksChanged()
+        {
+            RefreshCache();
+            EditorApplication.RepaintProjectWindow();
+        }
+
+        /// <summary>
         /// キャッシュ更新
         /// </summary>
         private static void RefreshCache()
@@ -114,10 +123,17 @@ namespace sh0uRoom.AssetLinker
                     if (string.IsNullOrEmpty(n) || n.EndsWith(".meta"))
                         continue;
 
+                    // 実在チェックして分類（存在しないパスは無視）
                     if (AssetDatabase.IsValidFolder(n))
+                    {
                         s_LinkedFolders.Add(n);
+                    }
                     else
-                        s_LinkedAssets.Add(n);
+                    {
+                        var obj = AssetDatabase.LoadMainAssetAtPath(n);
+                        if (obj != null)
+                            s_LinkedAssets.Add(n);
+                    }
                 }
             }
         }
@@ -130,17 +146,11 @@ namespace sh0uRoom.AssetLinker
 
         static bool IsLinkedAsset(string assetPath)
         {
-            // 明示的に登録されたアセット
             if (s_LinkedAssets.Contains(assetPath))
                 return true;
 
-            // リンクされたフォルダ自身 or その配下のファイル/フォルダ
-            foreach (var folder in s_LinkedFolders)
-            {
-                if (assetPath == folder) return true;
-                if (assetPath.Length > folder.Length && assetPath.StartsWith(folder + "/", System.StringComparison.Ordinal))
-                    return true;
-            }
+            if (s_LinkedFolders.Contains(assetPath))
+                return true;
 
             return false;
         }

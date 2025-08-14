@@ -221,6 +221,9 @@ namespace sh0uRoom.AssetLinker
                 {
                     throw new System.Exception("Failed to write json.");
                 }
+
+                // リンク作成を通知してProjectウィンドウを更新
+                LinkerProjectWindowDecorator.NotifyLinksChanged();
             }
             catch (System.Exception e)
             {

@@ -91,6 +91,7 @@ namespace sh0uRoom.AssetLinker
                         {
                             itemRootView.Remove(itemUxml);
                             System.IO.File.Delete(path);
+                            LinkerProjectWindowDecorator.NotifyLinksChanged();
                         }
                     };
 
