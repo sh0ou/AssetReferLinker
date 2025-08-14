@@ -1,7 +1,6 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Newtonsoft.Json;
 
 namespace sh0uRoom.AssetLinker
 {
@@ -32,15 +31,14 @@ namespace sh0uRoom.AssetLinker
 
             var missingCount = 0;
             var missingInfo = rootUxml.Q<Label>("MissingInfo");
+            var loc = Localizer.Instance;
 
-            //ディレクトリが存在するか確認
-            if (System.IO.Directory.Exists("AssetLinker"))
+            if (LinkerFileUtil.DirectoryExists(LinkerConstants.FolderName))
             {
-                var linkerDatas = System.IO.Directory.GetFiles("AssetLinker", "*.astlnk");
-                foreach (var data in linkerDatas)
+                var linkerPaths = LinkerFileUtil.GetAllLinkPaths();
+                foreach (var path in linkerPaths)
                 {
-                    var linker = LoadLinkerData(data);
-                    if (linker == null)
+                    if (!LinkerFileUtil.TryReadJson(path, out LinkerData linker) || linker == null)
                     {
                         continue;
                     }
@@ -53,56 +51,56 @@ namespace sh0uRoom.AssetLinker
 
                     var vendorField = container.Q<Label>("VendorInfo");
 
-                    var str_free = Localizer.Instance.Translate("FREE");
-                    var str_paid = Localizer.Instance.Translate("PAID");
+                    var str_free = loc.Translate("FREE");
+                    var str_paid = loc.Translate("PAID");
                     vendorField.text = $"{linker.Vendor} / {(linker.IsFree ? str_free : str_paid)}";
 
-                    var downloadButton = container.Q<VisualElement>("ActionView").Q<Button>("Download");
+                    var actionView = container.Q<VisualElement>("ActionView");
+
+                    // ダウンロードURLがある場合は表示
+                    var downloadButton = actionView.Q<Button>("Download");
                     downloadButton.clicked += () =>
                     {
                         var url = linker.DownloadURL;
-                        var message = Localizer.Instance.Translate("OPENURL_MESSAGE");
+                        var message = loc.Translate("OPENURL_MESSAGE");
                         if (EditorUtility.DisplayDialog("Open URL", $"{message}\n{url}", "Yes", "No"))
                         {
                             Application.OpenURL(url);
                         }
                     };
-                    var licenseButton = container.Q<VisualElement>("ActionView").Q<Button>("License");
-                    if (string.IsNullOrEmpty(linker.LicenseURL))
-                    {
-                        licenseButton.SetEnabled(false);
-                    }
-                    else
-                    {
-                        licenseButton.SetEnabled(true);
-                    }
+
+                    // ライセンスページを開くボタン
+                    var licenseButton = actionView.Q<Button>("License");
+                    licenseButton.SetEnabled(!string.IsNullOrEmpty(linker.LicenseURL));
                     licenseButton.clicked += () =>
                     {
                         var url = linker.LicenseURL;
-                        var message = Localizer.Instance.Translate("OPENURL_MESSAGE");
+                        var message = loc.Translate("OPENURL_MESSAGE");
                         if (EditorUtility.DisplayDialog("Open URL", $"{message}\n{url}", "Yes", "No"))
                         {
                             Application.OpenURL(url);
                         }
                     };
-                    var unlinkButton = container.Q<VisualElement>("ActionView").Q<Button>("Unlink");
+
+                    // リンク解除ボタン
+                    var unlinkButton = actionView.Q<Button>("Unlink");
                     unlinkButton.clicked += () =>
                     {
-                        var message = Localizer.Instance.Translate("UNLINK_MESSAGE");
+                        var message = loc.Translate("UNLINK_MESSAGE");
                         if (EditorUtility.DisplayDialog("Unlink", message, "Yes", "No"))
                         {
                             itemRootView.Remove(itemUxml);
-                            System.IO.File.Delete(data);
+                            System.IO.File.Delete(path);
+                            LinkerProjectWindowDecorator.NotifyLinksChanged();
                         }
                     };
 
                     var isMissingFound = false;
                     var pathsView = container.Q<Foldout>("Paths").Q<ScrollView>();
-                    foreach (var path in linker.Paths)
+                    foreach (var assetPath in linker.Paths)
                     {
-                        var pathLabel = new Label(path);
-                        //存在しないパスまたはディレクトリは黄色で表示
-                        if (!ValidateFile(path) && !ValidateDirectory(path))
+                        var pathLabel = new Label(assetPath);
+                        if (!LinkerFileUtil.FileExists(assetPath) && !LinkerFileUtil.DirectoryExists(assetPath))
                         {
                             pathLabel.style.color = Color.red;
                             missingCount++;
@@ -115,91 +113,46 @@ namespace sh0uRoom.AssetLinker
 
                         pathsView.contentContainer.Add(pathLabel);
                     }
-                    if (isMissingFound)
-                    {
-                        var color = new Color(1f, 1f, 0f, 0.5f);
-                        itemView.Q<Foldout>().style.borderTopColor = color;
-                        itemView.Q<Foldout>().style.borderBottomColor = color;
-                        itemView.Q<Foldout>().style.borderLeftColor = color;
-                        itemView.Q<Foldout>().style.borderRightColor = color;
-                    }
-                    else
-                    {
-                        var color = new Color(0f, 1f, 0f, 0.5f);
-                        itemView.Q<Foldout>().style.borderTopColor = color;
-                        itemView.Q<Foldout>().style.borderBottomColor = color;
-                        itemView.Q<Foldout>().style.borderLeftColor = color;
-                        itemView.Q<Foldout>().style.borderRightColor = color;
-                    }
+
+                    var color = isMissingFound ? new Color(1f, 1f, 0f, 0.5f) : new Color(0f, 1f, 0f, 0.5f);
+                    var fold = itemView.Q<Foldout>();
+                    fold.style.borderTopColor = color;
+                    fold.style.borderBottomColor = color;
+                    fold.style.borderLeftColor = color;
+                    fold.style.borderRightColor = color;
 
                     itemRootView.Add(itemUxml);
                 }
 
-                if (linkerDatas.Length == 0)
+                if (linkerPaths.Length == 0)
                 {
-                    var message = Localizer.Instance.Translate("MISSINGINFO_ERROR");
-                    missingInfo.text = message;
+                    missingInfo.text = loc.Translate("MISSINGINFO_ERROR");
                     missingInfo.style.color = Color.yellow;
                 }
                 else if (missingCount > 0)
                 {
-                    var message = Localizer.Instance.Translate("MISSINGINFO_FOUND");
-                    missingInfo.text = $"{missingCount} {message}";
+                    missingInfo.text = $"{missingCount} {loc.Translate("MISSINGINFO_FOUND")}";
                     missingInfo.style.color = Color.yellow;
                 }
                 else
                 {
-                    var message = Localizer.Instance.Translate("MISSINGINFO_OK");
-                    missingInfo.text = message;
+                    missingInfo.text = loc.Translate("MISSINGINFO_OK");
                     missingInfo.style.color = Color.green;
                 }
             }
             else
             {
-                var message = Localizer.Instance.Translate("MISSINGINFO_ERROR");
-                missingInfo.text = message;
+                missingInfo.text = loc.Translate("MISSINGINFO_ERROR");
                 missingInfo.style.color = Color.yellow;
             }
 
             var dontShowField = rootUxml.Q<Toggle>("DontShow");
-            dontShowField.label = Localizer.Instance.Translate("DONTSHOWAGAIN");
-            dontShowField.value = !LinkerSettings.instance.IsAutoShow;
-            dontShowField.RegisterValueChangedCallback((evt) =>
+            dontShowField.label = loc.Translate("DONTSHOWAGAIN");
+            dontShowField.value = !LinkerSettings.IsAutoShow;
+            dontShowField.RegisterValueChangedCallback(evt =>
             {
-                LinkerSettings.instance.IsAutoShow = !evt.newValue;
-                EditorUtility.SetDirty(LinkerSettings.instance);
+                LinkerSettings.IsAutoShow = !evt.newValue;
             });
-        }
-
-        private LinkerData LoadLinkerData(string path)
-        {
-            // var path = $"AssetLinker/{name}.astlnk";
-            if (!ValidateFile(path)) return null;
-
-            var json = System.IO.File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<LinkerData>(json);
-        }
-
-        private bool ValidateFile(string path)
-        {
-            if (string.IsNullOrEmpty(path)) return false;
-
-            if (!System.IO.File.Exists(path))
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private bool ValidateDirectory(string path)
-        {
-            if (string.IsNullOrEmpty(path)) return false;
-
-            if (!System.IO.Directory.Exists(path))
-            {
-                return false;
-            }
-            return true;
         }
 
         [SerializeField] private VisualTreeAsset linkerViewerUxml;
@@ -213,39 +166,38 @@ namespace sh0uRoom.AssetLinker
 
         static void ShowOnStartup()
         {
-            var isAlreadyShown = SessionState.GetBool(AlreadyShown, false);
+            var isAlreadyShown = SessionState.GetBool(LinkerConstants.AlreadyShownSessionKey, false);
             if (!isAlreadyShown)
             {
                 OnLinkerViewerLoader();
-                SessionState.SetBool(AlreadyShown, true);
+                SessionState.SetBool(LinkerConstants.AlreadyShownSessionKey, true);
             }
         }
 
         static void OnLinkerViewerLoader()
         {
-            if (!System.IO.Directory.Exists("AssetLinker")) return;
+            if (!LinkerFileUtil.DirectoryExists(LinkerConstants.FolderName)) return;
 
             Debug.Log("Validate Assets...");
 
-            // missingがある場合はウインドウを開く
-            var linkerDatas = System.IO.Directory.GetFiles("AssetLinker", "*.astlnk");
-            var isHasmissing = false;
-            foreach (var data in linkerDatas)
+            // missing がある場合はウインドウを開く
+            var linkerPaths = LinkerFileUtil.GetAllLinkPaths();
+            foreach (var path in linkerPaths)
             {
-                var linker = JsonConvert.DeserializeObject<LinkerData>(System.IO.File.ReadAllText(data));
-                foreach (var path in linker.Paths)
+                if (!LinkerFileUtil.TryReadJson(path, out LinkerData linker) || linker == null)
                 {
-                    if (!System.IO.File.Exists(path) && !System.IO.Directory.Exists(path))
+                    continue;
+                }
+
+                foreach (var p in linker.Paths)
+                {
+                    if (!LinkerFileUtil.FileExists(p) && !LinkerFileUtil.DirectoryExists(p))
                     {
-                        isHasmissing = true;
-                        break;
+                        LinkerViewer.CreateWindow();
+                        return;
                     }
                 }
             }
-
-            if (isHasmissing) LinkerViewer.CreateWindow();
         }
-
-        private const string AlreadyShown = "com.example.welcome_window_shown";
     }
 }

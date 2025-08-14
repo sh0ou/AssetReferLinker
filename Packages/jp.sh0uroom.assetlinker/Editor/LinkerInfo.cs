@@ -6,10 +6,7 @@ namespace sh0uRoom.AssetLinker
             "https://assetstore.unity.com/packages/"
         };
         public static readonly string[] boothURLs = {
-            "https://booth.pm/ja/items/",
-            "https://booth.pm/en/items/",
-            "https://booth.pm/ko/items/",
-            "https://booth.pm/zh-tw/items/",
+            "https://booth.pm/*/items/",
             "https://*.booth.pm/items/"
         };
         public static readonly string[] gumroadURLs = {
@@ -17,10 +14,6 @@ namespace sh0uRoom.AssetLinker
         };
         public static readonly string[] githubURLs = {
             "https://github.com/"
-        };
-        public static readonly string[] vketStoreURLs = {
-            "https://store.vket.com/ja/items/",
-            "https://store.vket.com/en/items/"
         };
     }
 
@@ -31,8 +24,7 @@ namespace sh0uRoom.AssetLinker
         AssetStore,
         Booth,
         Gumroad,
-        GitHub,
-        VKetStore
+        GitHub
     }
 
     [System.Serializable]

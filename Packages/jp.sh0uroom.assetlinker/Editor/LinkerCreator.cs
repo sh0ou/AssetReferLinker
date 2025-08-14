@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using System.IO;
 
 namespace sh0uRoom.AssetLinker
 {
@@ -23,33 +23,37 @@ namespace sh0uRoom.AssetLinker
             var asset = linkerCreatorUxml.CloneTree();
             rootVisualElement.Add(asset);
             var rootView = asset.Q<VisualElement>("View");
-            var path = AssetDatabase.GetAssetPath(Selection.activeObject);
+            var selectionPath = AssetDatabase.GetAssetPath(Selection.activeObject);
+
+            var loc = Localizer.Instance;
 
             var fileNameField = rootView.Q<TextField>("FileName");
-            fileNameField.label = Localizer.Instance.Translate("FILE_NAME");
+            fileNameField.label = loc.Translate("FILE_NAME");
             fileNameField.Q<VisualElement>("unity-text-input").style.opacity = 0.5f;
-            var fileName = "";
-            if (string.IsNullOrEmpty(path))
+
+            var fileName = string.Empty;
+            if (string.IsNullOrEmpty(selectionPath))
             {
-                //フォルダ名の最下層（現在選択中のフォルダ）を取得
-                //スラッシュで区切られた文字列を配列にして、最後の要素を取得
-                var pathArray = EditorUtility.OpenFolderPanel("Select Folder", "", "").Split('/');
-                fileName = pathArray[pathArray.Length - 1];
+                var chosen = EditorUtility.OpenFolderPanel("Select Folder", "", "");
+                if (!string.IsNullOrEmpty(chosen))
+                {
+                    fileName = Path.GetFileName(chosen);
+                    selectionPath = chosen.Replace('\\', '/');
+                }
             }
             else
             {
-                //ファイル名を取得
-                var pathArray = path.Split('/');
-                fileName = pathArray[pathArray.Length - 1];
+                // 最下層の名前を取得
+                fileName = Path.GetFileName(selectionPath);
             }
             fileNameField.value = fileName;
 
             var fileNameHelpbox = rootView.Q<HelpBox>("FileNameWarning");
-            fileNameHelpbox.text = Localizer.Instance.Translate("FILE_NAME_WARNING");
+            fileNameHelpbox.text = loc.Translate("FILE_NAME_WARNING");
 
             var downloadURLField = rootView.Q<TextField>("DownloadURL");
-            downloadURLField.label = Localizer.Instance.Translate("DOWNLOAD_URL");
-            if (string.IsNullOrEmpty(path))
+            downloadURLField.label = loc.Translate("DOWNLOAD_URL");
+            if (string.IsNullOrEmpty(selectionPath))
             {
                 downloadURLField.style.display = DisplayStyle.None;
                 return;
@@ -58,10 +62,11 @@ namespace sh0uRoom.AssetLinker
             {
                 downloadURLField.style.display = DisplayStyle.Flex;
             }
+
             var filePathField = rootView.Q<TextField>("FilePath");
-            filePathField.label = Localizer.Instance.Translate("ASSET_PATH");
+            filePathField.label = loc.Translate("ASSET_PATH");
             filePathField.Q<VisualElement>("unity-text-input").style.opacity = 0.5f;
-            filePathField.value = path;
+            filePathField.value = selectionPath;
 
             var detailView = rootView.Q<VisualElement>("DetailView");
 
@@ -88,13 +93,13 @@ namespace sh0uRoom.AssetLinker
 
             //アセット名
             var assetNameField = detailView.Q<TextField>("AssetName");
-            assetNameField.label = Localizer.Instance.Translate("ASSET_NAME");
+            assetNameField.label = loc.Translate("ASSET_NAME");
 
             //ライセンスURL
             var licenseURLField = detailView.Q<TextField>("LicenseURL");
-            licenseURLField.label = Localizer.Instance.Translate("LICENSE_URL");
+            licenseURLField.label = loc.Translate("LICENSE_URL");
             var licenseURLWarning = detailView.Q<HelpBox>("LicenseURLWarning");
-            licenseURLWarning.text = Localizer.Instance.Translate("LICENSE_WARNING");
+            licenseURLWarning.text = loc.Translate("LICENSE_WARNING");
             licenseURLField.RegisterValueChangedCallback((evt) =>
             {
                 if (string.IsNullOrEmpty(licenseURLField.value) || !licenseURLField.value.StartsWith("https://"))
@@ -108,44 +113,35 @@ namespace sh0uRoom.AssetLinker
             });
 
             var isFreeToggle = detailView.Q<Toggle>("IsFree");
-            isFreeToggle.label = Localizer.Instance.Translate("ISFREE");
+            isFreeToggle.label = loc.Translate("ISFREE");
 
-            //ファイルパス
+            // ファイルパス
             var filePathsFoldout = detailView.Q<Foldout>("FilePaths");
-            filePathsFoldout.text = Localizer.Instance.Translate("FILEPATHS");
-            var filePaths = AssetDatabase.FindAssets("", new string[] { path }); //GUIDなので後でパスに変換する
-            var fileToggles = new Dictionary<string, bool>();
-            for (int i = 0; i < filePaths.Length; i++)
+            filePathsFoldout.text = loc.Translate("FILEPATHS");
+            var guids = AssetDatabase.FindAssets("", new string[] { selectionPath }); // GUID を後でパスに変換
+            var fileToggles = new Dictionary<string, bool>(guids.Length);
+            for (int i = 0; i < guids.Length; i++)
             {
-                var filePath = filePaths[i];
-                var pathStr = AssetDatabase.GUIDToAssetPath(filePath); //これをtargetPathsに追加する
+                var guid = guids[i];
+                var assetPath = AssetDatabase.GUIDToAssetPath(guid);
                 var item = linkerCreatorItemUxml.CloneTree();
                 var toggleField = item.Q<VisualElement>("ItemView").Q<Toggle>("IsLink");
-                fileToggles.Add(pathStr, true);
-                toggleField.RegisterValueChangedCallback((evt) =>
+                fileToggles.Add(assetPath, true);
+                toggleField.RegisterValueChangedCallback(evt =>
                 {
-                    if (evt.newValue)
-                    {
-                        fileToggles[pathStr] = true;
-                    }
-                    else
-                    {
-                        fileToggles[pathStr] = false;
-                    }
+                    fileToggles[assetPath] = evt.newValue;
                 });
 
-                toggleField.Q<Label>("Path").text = pathStr;
-                var container = filePathsFoldout.Q<ScrollView>().contentContainer;
-                container.Add(item);
+                toggleField.Q<Label>("Path").text = assetPath;
+                filePathsFoldout.Q<ScrollView>().contentContainer.Add(item);
             }
 
             //警告文
             var modifyWarning = detailView.Q<HelpBox>("ModifyWarning");
-            modifyWarning.text = $"<b><size=14>{Localizer.Instance.Translate("CREATE_WARNING_0")}</size></b>\n{Localizer.Instance.Translate("CREATE_WARNING_1")}";
+            modifyWarning.text = $"<b><size=14>{loc.Translate("CREATE_WARNING_0")}</size></b>\n{loc.Translate("CREATE_WARNING_1")}";
 
             //リンク作成
             var createButton = rootView.Q<Button>("LinkButton");
-
             createButton.RegisterCallback<ClickEvent>((evt) =>
             {
                 var linkerData = new LinkerData
@@ -158,24 +154,25 @@ namespace sh0uRoom.AssetLinker
                     IsFree = isFreeToggle.value,
                     Paths = fileToggles.Where(x => x.Value).Select(x => x.Key).ToArray()
                 };
+
                 CreateLink(linkerData);
-                if (ValidateFile(linkerData.FileName))
+
+                if (IsLinked(linkerData.FileName))
                 {
-                    // ポップアップ表示
-                    var message = Localizer.Instance.Translate("CREATE_OK");
+                    var message = loc.Translate("CREATE_OK");
                     EditorUtility.DisplayDialog("LinkerCreator", message, "OK");
                     Close();
                 }
                 else
                 {
-                    var message = Localizer.Instance.Translate("CREATE_NG");
+                    var message = loc.Translate("CREATE_NG");
                     EditorUtility.DisplayDialog("LinkerCreator", message, "OK");
                 }
             });
 
             //リンク情報
             var linkInfo = rootView.Q<Label>("LinkInfo");
-            if (ValidateFile(fileNameField.value))
+            if (IsLinked(fileNameField.value))
             {
                 linkInfo.text = "Linked!";
                 linkInfo.style.color = Color.green;
@@ -192,29 +189,41 @@ namespace sh0uRoom.AssetLinker
             rootVisualElement.Clear();
         }
 
-        private static bool ValidateFile(string name)
+        // private static bool ValidateFile(string name)
+        // {
+        //     var path = $"AssetLinker/{name}.astlnk";
+        //     return System.IO.File.Exists(path) && System.IO.File.ReadAllText(path).Contains("DownloadURL");
+        // }
+
+        private static bool IsLinked(string fileName)
         {
-            var path = $"AssetLinker/{name}.astlnk";
-            return System.IO.File.Exists(path) && System.IO.File.ReadAllText(path).Contains("DownloadURL");
+            var path = LinkerFileUtil.GetLinkPath(fileName);
+            if (!LinkerFileUtil.FileExists(path)) return false;
+
+            try
+            {
+                var json = File.ReadAllText(path);
+                return !string.IsNullOrEmpty(json) && json.Contains("DownloadURL");
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private void CreateLink(LinkerData data)
         {
             try
             {
-                var path = $"{FOLDER_NAME}/{data.FileName}.astlnk";
-
-                // JSON形式で出力
-                // var json = JsonUtility.ToJson(data);
-                var json = JsonConvert.SerializeObject(data, Formatting.Indented);
-                // Debug.Log("Generated JSON: " + json);
-
-                // ファイルにJSONを書き込む
-                if (!System.IO.Directory.Exists(FOLDER_NAME))
+                LinkerFileUtil.EnsureFolder();
+                var path = LinkerFileUtil.GetLinkPath(data.FileName);
+                if (!LinkerFileUtil.TryWriteJson(path, data, indent: true))
                 {
-                    System.IO.Directory.CreateDirectory(FOLDER_NAME);
+                    throw new System.Exception("Failed to write json.");
                 }
-                System.IO.File.WriteAllText(path, json);
+
+                // リンク作成を通知してProjectウィンドウを更新
+                LinkerProjectWindowDecorator.NotifyLinksChanged();
             }
             catch (System.Exception e)
             {
@@ -245,9 +254,6 @@ namespace sh0uRoom.AssetLinker
             if (TryUpdateVendorLabel(downloadURLField.value, LinkerInfo.githubURLs, labelField, Vendor.GitHub))
                 return Vendor.GitHub;
 
-            if (TryUpdateVendorLabel(downloadURLField.value, LinkerInfo.vketStoreURLs, labelField, Vendor.VKetStore))
-                return Vendor.VKetStore;
-
             labelField.text = Localizer.Instance.Translate("VENDOR_UNKNOWN");
             labelField.style.color = Color.yellow;
             return Vendor.Unknown;
@@ -257,7 +263,7 @@ namespace sh0uRoom.AssetLinker
         {
             foreach (var targetUrl in targetUrls)
             {
-                var pattern = Regex.Escape(targetUrl).Replace("\\*", ".*");
+                var pattern = "^" + Regex.Escape(targetUrl).Replace("\\*", ".*") + ".*$";
                 if (Regex.IsMatch(url, pattern))
                 {
                     var message = Localizer.Instance.Translate("VENDOR_INFO");
@@ -279,7 +285,6 @@ namespace sh0uRoom.AssetLinker
 
         [SerializeField] private VisualTreeAsset linkerCreatorUxml;
         [SerializeField] private VisualTreeAsset linkerCreatorItemUxml;
-        private const string FOLDER_NAME = "AssetLinker";
         private const string UI_TEXTBG_NAME = "unity-text-input";
     }
 }
