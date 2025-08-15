@@ -10,6 +10,15 @@ namespace sh0uRoom.AssetLinker
 {
     public class LinkerCreator : EditorWindow
     {
+        [SerializeField] private VisualTreeAsset linkerCreatorUxml;
+        [SerializeField] private VisualTreeAsset linkerCreatorItemUxml;
+        private const string UI_TEXTBG_NAME = "unity-text-input";
+
+        private Dictionary<string, bool> _toggleStates;
+        private Dictionary<string, Toggle> _toggleByPath;
+        private Dictionary<string, List<string>> _childrenByFolder;
+        private Dictionary<string, string> _parentByPath;
+
         [MenuItem("Assets/AssetLinker")]
         public static void CreateWindow()
         {
@@ -34,11 +43,16 @@ namespace sh0uRoom.AssetLinker
             var fileName = string.Empty;
             if (string.IsNullOrEmpty(selectionPath))
             {
+                // 未選択ならフォルダダイアログ
                 var chosen = EditorUtility.OpenFolderPanel("Select Folder", "", "");
                 if (!string.IsNullOrEmpty(chosen))
                 {
-                    fileName = Path.GetFileName(chosen);
-                    selectionPath = chosen.Replace('\\', '/');
+                    var unityPath = ToUnityAssetPath(chosen);
+                    if (!string.IsNullOrEmpty(unityPath))
+                    {
+                        fileName = Path.GetFileName(unityPath);
+                        selectionPath = unityPath.Replace('\\', '/');
+                    }
                 }
             }
             else
@@ -115,25 +129,110 @@ namespace sh0uRoom.AssetLinker
             var isFreeToggle = detailView.Q<Toggle>("IsFree");
             isFreeToggle.label = loc.Translate("ISFREE");
 
-            // ファイルパス
+            // ファイルパス（親フォルダも含め、フォルダ⇔子で同期＆親は三状態表示）
             var filePathsFoldout = detailView.Q<Foldout>("FilePaths");
             filePathsFoldout.text = loc.Translate("FILEPATHS");
-            var guids = AssetDatabase.FindAssets("", new string[] { selectionPath }); // GUID を後でパスに変換
-            var fileToggles = new Dictionary<string, bool>(guids.Length);
-            for (int i = 0; i < guids.Length; i++)
+            var listContainer = filePathsFoldout.Q<ScrollView>().contentContainer;
+
+            // 状態テーブル初期化
+            _toggleStates = new Dictionary<string, bool>(256);
+            _toggleByPath = new Dictionary<string, Toggle>(256);
+            _childrenByFolder = new Dictionary<string, List<string>>(128);
+            _parentByPath = new Dictionary<string, string>(512);
+
+            // 収集
+            var allFolderPaths = new List<string>();
+            var allFilePaths = new List<string>();
+
+            if (AssetDatabase.IsValidFolder(selectionPath))
             {
-                var guid = guids[i];
-                var assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                var item = linkerCreatorItemUxml.CloneTree();
-                var toggleField = item.Q<VisualElement>("ItemView").Q<Toggle>("IsLink");
-                fileToggles.Add(assetPath, true);
-                toggleField.RegisterValueChangedCallback(evt =>
+                // 親フォルダもトラッキング
+                allFolderPaths.Add(selectionPath);
+                CollectSubFoldersRecursive(selectionPath, allFolderPaths);
+
+                // 配下ファイル
+                var guidsInRoot = AssetDatabase.FindAssets("", new[] { selectionPath });
+                for (int i = 0; i < guidsInRoot.Length; i++)
                 {
-                    fileToggles[assetPath] = evt.newValue;
+                    var p = AssetDatabase.GUIDToAssetPath(guidsInRoot[i]);
+                    if (string.IsNullOrEmpty(p) || AssetDatabase.IsValidFolder(p)) continue;
+                    allFilePaths.Add(p);
+                }
+            }
+            else
+            {
+                // 単体 or 混在
+                var guids = AssetDatabase.FindAssets("", new[] { selectionPath });
+                if (guids != null && guids.Length > 0)
+                {
+                    for (int i = 0; i < guids.Length; i++)
+                    {
+                        var p = AssetDatabase.GUIDToAssetPath(guids[i]);
+                        if (string.IsNullOrEmpty(p)) continue;
+                        if (AssetDatabase.IsValidFolder(p)) allFolderPaths.Add(p);
+                        else allFilePaths.Add(p);
+                    }
+                }
+                else if (!string.IsNullOrEmpty(selectionPath))
+                {
+                    if (AssetDatabase.IsValidFolder(selectionPath)) allFolderPaths.Add(selectionPath);
+                    else allFilePaths.Add(selectionPath);
+                }
+            }
+
+            // ソート: フォルダ→ファイル
+            allFolderPaths.Sort(System.StringComparer.Ordinal);
+            allFilePaths.Sort(System.StringComparer.Ordinal);
+
+            // 親子関係マップ
+            var allPaths = new List<string>(allFolderPaths.Count + allFilePaths.Count);
+            allPaths.AddRange(allFolderPaths);
+            allPaths.AddRange(allFilePaths);
+
+            foreach (var p in allPaths)
+            {
+                var parent = GetParentPath(p);
+                if (!string.IsNullOrEmpty(parent) && parent.StartsWith(selectionPath))
+                {
+                    _parentByPath[p] = parent;
+                    if (!_childrenByFolder.TryGetValue(parent, out var list))
+                    {
+                        list = new List<string>();
+                        _childrenByFolder[parent] = list;
+                    }
+                    list.Add(p);
+                }
+            }
+
+            // UI 生成
+            foreach (var p in allPaths)
+            {
+                var item = linkerCreatorItemUxml.CloneTree();
+                var toggle = item.Q<VisualElement>("ItemView").Q<Toggle>("IsLink");
+
+                // 初期は全て ON、三状態は OFF
+                toggle.SetValueWithoutNotify(true);
+                toggle.showMixedValue = false;
+                _toggleStates[p] = true;
+                _toggleByPath[p] = toggle;
+
+                toggle.Q<Label>("Path").text = p;
+
+                toggle.RegisterValueChangedCallback(evt =>
+                {
+                    // 明示操作なら三状態を解除し、値を採用
+                    toggle.showMixedValue = false;
+                    _toggleStates[p] = evt.newValue;
+
+                    // フォルダなら子孫へ同期
+                    if (AssetDatabase.IsValidFolder(p))
+                        SetChildrenStateRecursive(p, evt.newValue);
+
+                    // 親の三状態を更新
+                    UpdateAncestorsState(p, selectionPath);
                 });
 
-                toggleField.Q<Label>("Path").text = assetPath;
-                filePathsFoldout.Q<ScrollView>().contentContainer.Add(item);
+                listContainer.Add(item);
             }
 
             //警告文
@@ -152,7 +251,7 @@ namespace sh0uRoom.AssetLinker
                     LicenseURL = licenseURLField.value,
                     Vendor = vendor,
                     IsFree = isFreeToggle.value,
-                    Paths = fileToggles.Where(x => x.Value).Select(x => x.Key).ToArray()
+                    Paths = _toggleStates.Where(x => x.Value).Select(x => x.Key).ToArray()
                 };
 
                 CreateLink(linkerData);
@@ -231,6 +330,106 @@ namespace sh0uRoom.AssetLinker
             }
         }
 
+        // OSパス→Unityアセットパス(Assets/...)に変換
+        private static string ToUnityAssetPath(string systemPath)
+        {
+            if (string.IsNullOrEmpty(systemPath)) return null;
+            systemPath = systemPath.Replace('\\', '/');
+            var dataPath = Application.dataPath.Replace('\\', '/');
+            if (systemPath.StartsWith(dataPath))
+                return "Assets" + systemPath.Substring(dataPath.Length);
+            return null;
+        }
+
+        // 親パスを取得（なければ null）
+        private static string GetParentPath(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return null;
+            var i = path.LastIndexOf('/');
+            if (i <= 0) return null;
+            return path.Substring(0, i);
+        }
+
+        // サブフォルダを再帰収集
+        private static void CollectSubFoldersRecursive(string root, List<string> result)
+        {
+            var queue = new Queue<string>();
+            queue.Enqueue(root);
+            while (queue.Count > 0)
+            {
+                var cur = queue.Dequeue();
+                var subs = AssetDatabase.GetSubFolders(cur);
+                if (subs == null || subs.Length == 0) continue;
+                foreach (var s in subs)
+                {
+                    result.Add(s);
+                    queue.Enqueue(s);
+                }
+            }
+        }
+
+        // 子孫（フォルダ/ファイル）を再帰的に同じ値に
+        private void SetChildrenStateRecursive(string folderPath, bool value)
+        {
+            if (!_childrenByFolder.TryGetValue(folderPath, out var children)) return;
+            for (int i = 0; i < children.Count; i++)
+            {
+                var c = children[i];
+                if (_toggleByPath.TryGetValue(c, out var t))
+                {
+                    t.showMixedValue = false; // 直接操作時は混在を解除
+                    t.SetValueWithoutNotify(value);
+                }
+                _toggleStates[c] = value;
+
+                if (AssetDatabase.IsValidFolder(c))
+                    SetChildrenStateRecursive(c, value);
+            }
+        }
+
+        // 親の状態（三状態）を上へ反映
+        private void UpdateAncestorsState(string path, string root)
+        {
+            var parent = GetParentPath(path);
+            while (!string.IsNullOrEmpty(parent) && parent.StartsWith(root))
+            {
+                bool anyOn = false;
+                bool anyOff = false;
+
+                if (_childrenByFolder.TryGetValue(parent, out var children))
+                {
+                    for (int i = 0; i < children.Count; i++)
+                    {
+                        var child = children[i];
+                        bool v = _toggleStates.TryGetValue(child, out var b) && b;
+                        anyOn |= v;
+                        anyOff |= !v;
+                        if (anyOn && anyOff) break;
+                    }
+                }
+
+                // 三状態の決定
+                if (_toggleByPath.TryGetValue(parent, out var pt))
+                {
+                    if (anyOn && anyOff)
+                    {
+                        pt.showMixedValue = true;    // 一部選択表示
+                        pt.SetValueWithoutNotify(false);
+                        _toggleStates[parent] = false;
+                    }
+                    else
+                    {
+                        pt.showMixedValue = false;
+                        bool on = anyOn && !anyOff;  // 全ON
+                        pt.SetValueWithoutNotify(on);
+                        _toggleStates[parent] = on;
+                    }
+                }
+
+                parent = GetParentPath(parent);
+            }
+        }
+
         private static Vendor UpdateVendorInfo(TextField downloadURLField, Label labelField)
         {
             if (string.IsNullOrEmpty(downloadURLField.value) || !downloadURLField.value.StartsWith("https://"))
@@ -282,9 +481,5 @@ namespace sh0uRoom.AssetLinker
             var regex = new Regex(@"^[a-zA-Z0-9-_ ]+$");
             return regex.IsMatch(name);
         }
-
-        [SerializeField] private VisualTreeAsset linkerCreatorUxml;
-        [SerializeField] private VisualTreeAsset linkerCreatorItemUxml;
-        private const string UI_TEXTBG_NAME = "unity-text-input";
     }
 }
