@@ -31,7 +31,7 @@ namespace sh0uRoom.AssetLinker
                 if (!LinkerFileUtil.TryReadJson(path, out LinkerData linker) || linker == null)
                     continue;
 
-                foreach (var p in linker.Paths)
+                foreach (var p in linker.Paths ?? System.Array.Empty<string>())
                 {
                     if (!LinkerFileUtil.FileExists(p) && !LinkerFileUtil.DirectoryExists(p))
                     {

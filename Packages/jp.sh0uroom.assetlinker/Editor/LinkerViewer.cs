@@ -122,7 +122,7 @@ namespace sh0uRoom.AssetLinker
             var isMissingFound = false;
             var pathsView      = container.Q<Foldout>("Paths").Q<ScrollView>();
 
-            foreach (var assetPath in linker.Paths)
+            foreach (var assetPath in linker.Paths ?? System.Array.Empty<string>())
             {
                 var exists    = LinkerFileUtil.FileExists(assetPath) || LinkerFileUtil.DirectoryExists(assetPath);
                 var pathLabel = new Label(assetPath) { style = { color = exists ? Color.green : Color.red } };

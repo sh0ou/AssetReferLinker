@@ -31,3 +31,4 @@ DELETE_TRACKED,This folder is tracked by AssetLinker. What do you want to do?,�
 UNLINK_AND_DELETE,Unlink & Delete,リンク解除して削除
 DELETE_ONLY,Delete only,削除のみ
 CANCEL,Cancel,キャンセル
+FOLDER_NOT_IN_ASSETS,Please select a folder inside the Assets directory.,Assetsディレクトリ内のフォルダを選択してください。

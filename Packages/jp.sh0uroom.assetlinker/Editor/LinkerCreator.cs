@@ -53,16 +53,16 @@ namespace sh0uRoom.AssetLinker
             var downloadURLField = rootView.Q<TextField>("DownloadURL");
             downloadURLField.label = loc.Translate("DOWNLOAD_URL");
 
+            var filePathField = rootView.Q<TextField>("FilePath");
+            SetupReadOnlyTextField(filePathField, loc.Translate("ASSET_PATH"), selectionPath);
+            SetupFilePathButton(rootView.Q<Button>("FilePathButton"), downloadURLField, rootView);
+
             if (string.IsNullOrEmpty(selectionPath))
             {
                 downloadURLField.style.display = DisplayStyle.None;
                 return;
             }
             downloadURLField.style.display = DisplayStyle.Flex;
-
-            var filePathField = rootView.Q<TextField>("FilePath");
-            SetupReadOnlyTextField(filePathField, loc.Translate("ASSET_PATH"), selectionPath);
-            SetupFilePathButton(rootView.Q<Button>("FilePathButton"), downloadURLField, rootView);
 
             var detailView = rootView.Q<VisualElement>("DetailView");
             SetupDownloadURLField(downloadURLField, detailView, detailView.Q<Label>("VendorInfo"));
@@ -147,7 +147,7 @@ namespace sh0uRoom.AssetLinker
                 var unityPath = ToUnityAssetPath(chosen);
                 if (string.IsNullOrEmpty(unityPath))
                 {
-                    EditorUtility.DisplayDialog("AssetLinker", "Assetsディレクトリ内のフォルダを選択してください。", "OK");
+                    EditorUtility.DisplayDialog("AssetLinker", Localizer.Instance.Translate("FOLDER_NOT_IN_ASSETS"), "OK");
                     return;
                 }
                 unityPath = unityPath.Replace('\\', '/');
