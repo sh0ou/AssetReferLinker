@@ -2,7 +2,10 @@
     <ui:Template name="Credit" src="project://database/Packages/jp.sh0uroom.assetlinker/UI/Credit.uxml?fileID=9197481963319205126&amp;guid=f9c3a6af0821505428255dd14c12084b&amp;type=3#Credit" />
     <ui:VisualElement name="View" style="flex-grow: 1;">
         <ui:Instance template="Credit" name="Credit" />
-        <ui:TextField label="Asset File Path" value="NOT SELECTED" readonly="true" picking-mode="Ignore" name="FilePath" style="opacity: 1;" />
+        <ui:VisualElement name="FilePathRow" style="flex-direction: row; align-items: center;">
+            <ui:TextField label="Asset File Path" value="NOT SELECTED" readonly="true" picking-mode="Ignore" name="FilePath" style="opacity: 1; flex-grow: 1; flex-shrink: 1;" />
+            <ui:Button text="..." name="FilePathButton" tooltip="Select folder" style="width: 28px; min-width: 28px; max-width: 28px; height: 20px; margin-left: 2px; flex-shrink: 0;" />
+        </ui:VisualElement>
         <ui:TextField picking-mode="Ignore" label="File Name" value="NOT SELECTED" name="FileName" readonly="true" style="opacity: 1;" />
         <ui:HelpBox text="The selected asset folder name becomes the file name.\nMake sure you have the correct folder." message-type="Info" name="FileNameWarning" style="min-height: 40px; height: 40px; max-height: 40px;" />
         <ui:TextField picking-mode="Ignore" label="Download URL" keyboard-type="URL" name="DownloadURL" focusable="true" style="display: none; visibility: visible; overflow: hidden; opacity: 1;" />
