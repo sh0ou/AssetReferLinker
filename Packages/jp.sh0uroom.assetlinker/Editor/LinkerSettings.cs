@@ -24,7 +24,12 @@ namespace sh0uRoom.AssetLinker
         {
             get
             {
-                var stored = (SystemLanguage)EditorPrefs.GetInt(KeyLanguage, (int)SystemLanguage.English);
+                // 未設定時はOS言語を使用する
+                var osLang = Application.systemLanguage;
+                var defaultLang = System.Array.IndexOf(supportLanguages, osLang) != -1
+                    ? osLang
+                    : SystemLanguage.English;
+                var stored = (SystemLanguage)EditorPrefs.GetInt(KeyLanguage, (int)defaultLang);
                 // サポート外が保存されていたら英語にフォールバック
                 return System.Array.IndexOf(supportLanguages, stored) == -1 ? SystemLanguage.English : stored;
             }
