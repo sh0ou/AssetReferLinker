@@ -9,11 +9,11 @@ namespace sh0uRoom.AssetLinker
         [SerializeField] private VisualTreeAsset linkerViewerUxml;
         [SerializeField] private VisualTreeAsset linkerViewerItemUxml;
 
-        [MenuItem("Window/AssetLinker/Show Linker")]
+        [MenuItem("Window/AssetLinker")]
         public static void CreateWindow()
         {
             var window = GetWindow<LinkerViewer>();
-            window.titleContent = new GUIContent("LinkerViewer");
+            window.titleContent = new GUIContent("AssetLinker");
         }
 
         private void OnEnable()  => Refresh();

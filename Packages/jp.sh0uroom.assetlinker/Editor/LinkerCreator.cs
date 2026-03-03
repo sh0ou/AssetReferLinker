@@ -28,7 +28,7 @@ namespace sh0uRoom.AssetLinker
         private Dictionary<string, List<string>> _childrenByFolder;
         private Dictionary<string, string> _parentByPath;
 
-        [MenuItem("Assets/AssetLinker")]
+        [MenuItem("Assets/Add AssetLinker...")]
         public static void CreateWindow()
         {
             var window = GetWindow<LinkerCreator>();

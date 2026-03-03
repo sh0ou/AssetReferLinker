@@ -72,8 +72,14 @@ namespace sh0uRoom.AssetLinker
                         Language = nextLang;
                         IsAutoShow = nextAuto;
                     }
+
+                    EditorGUILayout.Space();
+                    if (EditorGUILayout.LinkButton("README"))
+                    {
+                        Application.OpenURL("https://github.com/sh0ou/AssetReferLinker/blob/main/README.md");
+                    }
                 },
-                keywords = new HashSet<string>(new[] { "asset", "linker", "language", "auto", "show" })
+                keywords = new HashSet<string>(new[] { "asset", "linker", "language", "auto", "show", "readme" })
             };
         }
     }
