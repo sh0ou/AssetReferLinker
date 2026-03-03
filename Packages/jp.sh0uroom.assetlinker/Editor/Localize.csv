@@ -21,7 +21,7 @@ PAID,Paid,有料
 CREATE_OK,Link created!,リンクが作成されました！
 CREATE_NG,Failed to create link.\nThe file name contain characters that cannot be used?,リンクの作成に失敗しました\nファイル名に使用できない文字が含まれている可能性があります
 OPENURL_MESSAGE,Open this URL?,URLを開きますか?
-UNLINK_MESSAGE,Are you sure to unlink?,このアセットのリンクを解除しますか？
+UNLINK_MESSAGE,Are you sure you want to unlink?,このアセットのリンクを解除しますか？
 DOWNLOAD_BUTTON,Download,ダウンロード
 LICENSE_BUTTON,License,ライセンス
 UNLINK_BUTTON,UnLink,リンク解除
