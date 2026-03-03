@@ -21,4 +21,14 @@ PAID,Paid,有料
 CREATE_OK,Link created!,リンクが作成されました！
 CREATE_NG,Failed to create link.\nThe file name contain characters that cannot be used?,リンクの作成に失敗しました\nファイル名に使用できない文字が含まれている可能性があります
 OPENURL_MESSAGE,Open this URL?,URLを開きますか?
-UNLINK_MESSAGE,Are you sure to unlink?,このアセットのリンクを解除しますか？
+UNLINK_MESSAGE,Are you sure you want to unlink?,このアセットのリンクを解除しますか？
+DOWNLOAD_BUTTON,Download,ダウンロード
+LICENSE_BUTTON,License,ライセンス
+UNLINK_BUTTON,UnLink,リンク解除
+WHERE_BUTTON,Where?,どこ?
+WHERE_NOT_FOUND,The registered folder was not found.,登録されているフォルダが見つかりませんでした。
+DELETE_TRACKED,This folder is tracked by AssetLinker. What do you want to do?,このフォルダはAssetLinkerで追跡されています。どうしますか？
+UNLINK_AND_DELETE,Unlink & Delete,リンク解除して削除
+DELETE_ONLY,Delete only,削除のみ
+CANCEL,Cancel,キャンセル
+FOLDER_NOT_IN_ASSETS,Please select a folder inside the Assets directory.,Assetsディレクトリ内のフォルダを選択してください。

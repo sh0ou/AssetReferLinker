@@ -4,18 +4,9 @@ using UnityEngine.UIElements;
 
 namespace sh0uRoom.AssetLinker
 {
-    [InitializeOnLoad]
     public class Welcome : EditorWindow
     {
-        // static Welcome() => EditorApplication.delayCall += Check;
-
-        private static void Check()
-        {
-            if (LinkerSettings.IsAutoShow)
-            {
-                ShowWindow();
-            }
-        }
+        [SerializeField] private VisualTreeAsset welcomeUxml;
 
         [MenuItem("Window/AssetLinker/Welcome")]
         private static void ShowWindow()
@@ -64,7 +55,5 @@ namespace sh0uRoom.AssetLinker
                 LinkerSettings.IsAutoShow = !evt.newValue;
             });
         }
-
-        [SerializeField] private VisualTreeAsset welcomeUxml;
     }
 }
