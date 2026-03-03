@@ -37,7 +37,7 @@ namespace sh0uRoom.AssetLinker
 
         public static bool TryReadJson<T>(string path, out T data)
         {
-            data = default(T);
+            data = default;
             if (!FileExists(path)) return false;
 
             try
@@ -65,6 +65,13 @@ namespace sh0uRoom.AssetLinker
             {
                 return false;
             }
+        }
+
+        /// <summary>バックスラッシュをスラッシュに統一し、末尾スラッシュを除去します。</summary>
+        public static string NormalizePath(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return string.Empty;
+            return path.Replace('\\', '/').TrimEnd('/');
         }
     }
 }

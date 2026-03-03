@@ -17,7 +17,6 @@ namespace sh0uRoom.AssetLinker
         };
     }
 
-    [System.Serializable]
     public enum Vendor
     {
         Unknown,

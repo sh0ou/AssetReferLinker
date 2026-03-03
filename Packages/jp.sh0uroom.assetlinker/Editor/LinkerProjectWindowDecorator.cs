@@ -119,7 +119,7 @@ namespace sh0uRoom.AssetLinker
 
                 foreach (var p in linker.Paths)
                 {
-                    var n = NormalizePath(p);
+                    var n = LinkerFileUtil.NormalizePath(p);
                     if (string.IsNullOrEmpty(n) || n.EndsWith(".meta"))
                         continue;
 
@@ -138,21 +138,7 @@ namespace sh0uRoom.AssetLinker
             }
         }
 
-        private static string NormalizePath(string p)
-        {
-            if (string.IsNullOrEmpty(p)) return p;
-            return p.IndexOf('\\') >= 0 ? p.Replace('\\', '/') : p;
-        }
-
-        static bool IsLinkedAsset(string assetPath)
-        {
-            if (s_LinkedAssets.Contains(assetPath))
-                return true;
-
-            if (s_LinkedFolders.Contains(assetPath))
-                return true;
-
-            return false;
-        }
+        private static bool IsLinkedAsset(string assetPath)
+            => s_LinkedAssets.Contains(assetPath) || s_LinkedFolders.Contains(assetPath);
     }
 }

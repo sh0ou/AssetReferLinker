@@ -1,14 +1,33 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace sh0uRoom.AssetLinker
 {
     public class Localizer : SingletonEditor<Localizer>
     {
+        private TextAsset csv;
+        private Dictionary<string, Dictionary<SystemLanguage, string>> localizationDic;
         public void LoadLocalization()
         {
             if (localizationDic != null && localizationDic.Count > 0) return;
             localizationDic = new Dictionary<string, Dictionary<SystemLanguage, string>>();
+
+            // CreateInstance<T>() ではシリアライズフィールドが復元されないため、
+            // csv が未割り当ての場合はパッケージ内から自動ロードする
+            if (csv == null)
+            {
+                var guids = AssetDatabase.FindAssets("Localize t:TextAsset");
+                foreach (var guid in guids)
+                {
+                    var assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                    if (assetPath.Contains(LinkerConstants.PackageId))
+                    {
+                        csv = AssetDatabase.LoadAssetAtPath<TextAsset>(assetPath);
+                        break;
+                    }
+                }
+            }
 
             if (csv == null || string.IsNullOrEmpty(csv.text))
             {
@@ -70,8 +89,5 @@ namespace sh0uRoom.AssetLinker
             }
             return $"Missing: {id}";
         }
-
-        [SerializeField] private TextAsset csv;
-        private Dictionary<string, Dictionary<SystemLanguage, string>> localizationDic;
     }
 }
